@@ -47,12 +47,6 @@
         </li>
 
         <li>
-          <RouterLink to="/horaires">
-            Horaires
-          </RouterLink>
-        </li>
-
-        <li>
           <RouterLink to="/actualites">
             Actualités
           </RouterLink>
@@ -61,6 +55,12 @@
         <li>
           <RouterLink to="/galerie">
             Galerie
+          </RouterLink>
+        </li>
+
+        <li>
+          <RouterLink to="/horaires">
+            Horaires
           </RouterLink>
         </li>
 

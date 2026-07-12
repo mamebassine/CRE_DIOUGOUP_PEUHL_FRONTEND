@@ -2,9 +2,6 @@
 
 <div class="home-page">
 
-    
-    <!-- ================= HERO ================= -->
-
 <!-- ================= HERO ================= -->
 
 <section class="hero">
@@ -19,12 +16,15 @@
             >
         </div>
 
-        <div class="image-right">
-            <img
-                src="@/assets/images/recherche.png"
-                alt="Recherche"
-            >
-        </div>
+   <!-- Courbe blanche -->
+    <div class="hero-divider"></div>
+
+    <div class="image-right">
+        <img
+            src="@/assets/images/recherche.png"
+            alt="Recherche"
+        >
+    </div>
 
     </div>
 
@@ -71,208 +71,398 @@
 
 </section>
 
-    <!-- ================= STATISTIQUES ================= -->
 
-    <section class="section light">
+<!-- ================= Historique ================= -->
 
-        <div class="content">
+<section class="about-home">
+
+    <div class="container">
+
+        <!-- Image -->
+        <div class="about-image">
+
+            <img
+                src="@/assets/images/centre.png"
+                alt="Centre de Recherche et d'Essais de Diougoup Peuhl"
+            >
+
+        </div>
+
+
+        <!-- Texte -->
+        <div class="about-content">
+
+            <span class="section-subtitle">
+                À propos du Centre
+            </span>
+
 
             <h2>
-                Nos statistiques
+                Centre de Recherche et d'Essais
+                de Diougoup Peuhl
             </h2>
 
-            <div class="cards four">
 
-                <div class="card">
+            <p>
+                Le Centre de Recherche et d'Essais de Diougoup Peuhl (CRE)
+                est un espace d'apprentissage, d'innovation et
+                d'accompagnement dédié au développement des compétences.
+                Placé sous la tutelle du Ministère de l’Enseignement
+                Supérieur, de la Recherche et de l’Innovation (MESRI)
+                du Sénégal, il contribue à la formation des jeunes et à
+                la promotion des initiatives porteuses pour le développement
+                local.
+            </p>
 
-                    <h3>250+</h3>
 
-                    <p>Apprenants</p>
+            <RouterLink
+                to="/centre"
+                class="btn-about"
+            >
+                Découvrir le Centre →
+            </RouterLink>
 
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+<!-- ================= FORMATIONS ================= -->
+
+<section class="home-formations">
+
+    <div class="home-formations-container">
+
+        <div class="home-formations-header">
+
+            <span>Nos formations</span>
+
+            <h2>
+                Des formations adaptées à votre avenir
+            </h2>
+
+            <p>
+                Le CRE de Diougoup Peuhl propose des formations professionnelles
+                dans les domaines du numérique, de l'informatique, de
+                l'entrepreneuriat, de l'agroalimentaire et des énergies
+                renouvelables.
+            </p>
+
+        </div>
+
+        <div class="home-formations-grid">
+
+            <div class="home-formation-card">
+
+                <div class="home-formation-icon">💻</div>
+
+                <h3>Bureautique</h3>
+
+                <p>
+                    MS Windows, Word, Excel et PowerPoint.
+                </p>
+
+            </div>
+
+            <div class="home-formation-card">
+
+                <div class="home-formation-icon">🛠️</div>
+
+                <h3>Maintenance Informatique</h3>
+
+                <p>
+                    Installation, maintenance et dépannage des ordinateurs.
+                </p>
+
+            </div>
+
+            <div class="home-formation-card">
+
+                <div class="home-formation-icon">🎨</div>
+
+                <h3>Infographie</h3>
+
+                <p>
+                    Photoshop et Illustrator pour la création graphique.
+                </p>
+
+            </div>
+
+            <div class="home-formation-card">
+
+                <div class="home-formation-icon">🌐</div>
+
+                <h3>Développement Web</h3>
+
+                <p>
+                    Création de sites web modernes et applications web.
+                </p>
+
+            </div>
+
+            <div class="home-formation-card">
+
+                <div class="home-formation-icon">🚀</div>
+
+                <h3>Entrepreneuriat</h3>
+
+                <p>
+                    Développement personnel et création d'entreprise.
+                </p>
+
+            </div>
+
+            <div class="home-formation-card">
+
+                <div class="home-formation-icon">☀️</div>
+
+                <h3>Énergies renouvelables</h3>
+
+                <p>
+                    Formation sur les kits solaires et les solutions durables.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="home-formations-button">
+
+            <RouterLink
+                to="/formations"
+                class="home-btn-formation"
+            >
+                Voir toutes les formations →
+            </RouterLink>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PARTENAIRES ================= -->
+
+<section class="section partenaires">
+
+    <div class="content">
+
+        <h2>
+            Nos partenaires
+        </h2>
+
+        <p class="section-subtitle">
+            Le Centre de Recherche et d'Essais de Diougoup Peuhl collabore avec des institutions publiques et des partenaires engagés dans la formation, l'emploi et le développement.
+        </p>
+
+        <div class="partner-slider">
+
+            <div class="partner-track">
+
+                <!-- Série 1 -->
+
+                <div class="partner">
+                    <img src="@/assets/images/mesriSenegal.jpg" alt="MESRI Sénégal">
                 </div>
 
-                <div class="card">
-
-                    <h3>15</h3>
-
-                    <p>Formateurs</p>
-
+                <div class="partner">
+                    <img src="@/assets/images/force n.png" alt="Force N">
                 </div>
 
-                <div class="card">
-
-                    <h3>20+</h3>
-
-                    <p>Modules</p>
-
+                <div class="partner">
+                    <img src="@/assets/images/directionEmploiSenegal.png" alt="Direction Emploi Sénégal">
                 </div>
 
-                <div class="card">
+                <div class="partner">
+                    <img src="@/assets/images/anpej.png" alt="ANPEJ">
+                </div>
 
-                    <h3>10+</h3>
+                <div class="partner">
+                    <img src="@/assets/images/ansd.jpg" alt="ANSD">
+                </div>
 
-                    <p>Partenaires</p>
+                <div class="partner">
+                    <img src="@/assets/images/ugbs.jpg" alt="UGB">
+                </div>
 
+                <!-- Série 2 (pour un défilement infini) -->
+
+                <div class="partner">
+                    <img src="@/assets/images/mesriSenegal.jpg" alt="MESRI Sénégal">
+                </div>
+
+                <div class="partner">
+                    <img src="@/assets/images/force n.png" alt="Force N">
+                </div>
+
+                <div class="partner">
+                    <img src="@/assets/images/directionEmploiSenegal.png" alt="Direction Emploi Sénégal">
+                </div>
+
+                <div class="partner">
+                    <img src="@/assets/images/anpej.png" alt="ANPEJ">
+                </div>
+
+                <div class="partner">
+                    <img src="@/assets/images/ansd.jpg" alt="ANSD">
+                </div>
+
+                <div class="partner">
+                    <img src="@/assets/images/ugbs.jpg" alt="UGB">
                 </div>
 
             </div>
 
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
 
-    <!-- ================= FORMATIONS ================= -->
 
-    <section class="section">
+ <!-- ================= ACTUALITES ================= -->
 
-        <div class="content">
+<section class="section light">
 
-            <h2>
-                Nos formations
-            </h2>
+    <div class="content">
 
-            <div class="cards three">
+        <h2>
+            Actualités
+        </h2>
 
-                <div class="card">
+        <div class="cards three">
 
-                    <h4>
-                        Développement Web
-                    </h4>
+            <router-link to="/actualites" class="card news-card">
 
-                    <p>
-                        HTML, CSS, JavaScript, PHP, Laravel et Vue.js.
-                    </p>
+                <img src="@/assets/images/cafe.jpeg" alt="Formation">
 
-                </div>
+                <div class="news-content">
 
-                <div class="card">
-
-                    <h4>
-                        Bureautique
-                    </h4>
-
-                    <p>
-                        Word, Excel, PowerPoint et outils numériques.
-                    </p>
-
-                </div>
-
-                <div class="card">
-
-                    <h4>
-                        Infographie
-                    </h4>
-
-                    <p>
-                        Création graphique et communication visuelle.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- ================= ACTUALITES ================= -->
-
-    <section class="section light">
-
-        <div class="content">
-
-            <h2>
-                Actualités
-            </h2>
-
-            <div class="cards three">
-
-                <div class="card">
+                    <span>Formation</span>
 
                     <h4>
                         Nouvelle session de formation
                     </h4>
 
                     <p>
-                        Les inscriptions sont ouvertes.
+                        Les inscriptions sont ouvertes pour les nouvelles formations du CRE.
                     </p>
 
                 </div>
 
-                <div class="card">
+            </router-link>
+
+            <router-link to="/actualites" class="card news-card">
+
+                <img src="@/assets/images/tomate.jpeg" alt="Agriculture">
+
+                <div class="news-content">
+
+                    <span>Agriculture</span>
 
                     <h4>
-                        Activités du centre
+                        Recherche et expérimentation
                     </h4>
 
                     <p>
-                        Découvrez nos événements.
+                        Découvrez les nouvelles expérimentations agricoles du centre.
                     </p>
 
                 </div>
 
-                <div class="card">
+            </router-link>
+
+            <router-link to="/actualites" class="card news-card">
+
+                <img src="@/assets/images/dev web.jpg" alt="Développement Web">
+
+                <div class="news-content">
+
+                    <span>Numérique</span>
 
                     <h4>
-                        Réussites des apprenants
+                        Développement Web
                     </h4>
 
                     <p>
-                        Nos apprenants construisent leur avenir.
+                        Les apprenants réalisent des projets web modernes et innovants.
                     </p>
 
                 </div>
+
+            </router-link>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+<!-- ================= STATISTIQUES ================= -->
+
+<section class="section stats-section">
+
+    <div class="content">
+
+        <h2>
+            Nos statistiques
+        </h2>
+
+        <div class="cards four">
+
+            <div class="card stat-card">
+
+                <h3 class="counter" data-target="250">0</h3>
+
+                <p>Apprenants</p>
+
+            </div>
+
+            <div class="card stat-card">
+
+                <h3 class="counter" data-target="15">0</h3>
+
+                <p>Formateurs</p>
+
+            </div>
+
+            <div class="card stat-card">
+
+                <h3 class="counter" data-target="20">0</h3>
+
+                <p>Modules</p>
+
+            </div>
+
+            <div class="card stat-card">
+
+                <h3 class="counter" data-target="10">0</h3>
+
+                <p>Partenaires</p>
 
             </div>
 
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
 
-    <!-- ================= PARTENAIRES ================= -->
 
-    <section class="section">
-
-        <div class="content">
-
-            <h2>
-                Nos partenaires
-            </h2>
-
-            <div class="cards three">
-
-                <div class="card partner">
-
-                    Partenaire 1
-
-                </div>
-
-                <div class="card partner">
-
-                    Partenaire 2
-
-                </div>
-
-                <div class="card partner">
-
-                    Partenaire 3
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
+    
     <!-- ================= INSCRIPTION ================= -->
 
     <section class="join">
@@ -310,6 +500,46 @@
       import { RouterLink } from "vue-router";
       import centreImage from "@/assets/images/recherche.png";
 
+      
+      
+      import { onMounted } from "vue";
+
+onMounted(() => {
+
+    const counters = document.querySelectorAll(".counter");
+
+    counters.forEach(counter => {
+
+        const target = Number(counter.dataset.target);
+
+        let value = 0;
+
+        const step = Math.ceil(target / 80);
+
+        const update = () => {
+
+            value += step;
+
+            if (value >= target) {
+
+                counter.textContent = target + "+";
+
+            } else {
+
+                counter.textContent = value;
+
+                requestAnimationFrame(update);
+
+            }
+
+        };
+
+        update();
+
+    });
+
+});
+      
       </script>
 
 
@@ -421,15 +651,25 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     position:absolute;
 
-    right:0;
-
     top:0;
 
-    width:45%;
+    right:0;
+
+    width:43%;
 
     height:100%;
 
-    clip-path:polygon(15% 0,100% 0,100% 100%,0 100%);
+    overflow:hidden;
+
+    z-index:2;
+
+}
+
+.image-right img{
+
+    width:100%;
+    height:100%;
+    object-fit:cover;
 
 }
 
@@ -442,6 +682,29 @@ HERO tu m'a fatiguuer heeeeeeeee
     object-fit:cover;
 
 }
+
+.hero-divider{
+
+    position:absolute;
+
+    top:0%;
+
+    right:44%;
+
+    width:20px;
+
+    height:120%;
+
+    background:#fff;
+
+    border-radius:200px;
+
+    transform:rotate(5deg);
+
+    z-index:3;
+
+}
+
 .hero::before{
 
     content:"";
@@ -467,8 +730,8 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     width:650px;
 
-   padding-top:60px;
-    padding-left:90px;
+   padding-top:55px;
+    padding-left:100px;
 
 
 }
@@ -477,7 +740,7 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     color:white;
 
-    font-size:37px;
+    font-size:40px;
 
     line-height:1.2;
 
@@ -490,21 +753,23 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     color:white;
 
-    font-size:18px;
+    font-size:16px;
 
     line-height:1.7;
 
     max-width:650px;
+    font-weight:450;
+
 
 }
 .hero-bottom{
 
     position:absolute;
 
-    bottom:65px;   /* Avant : 35px */
+    bottom:43px;   /* Avant : 35px */
     left:50%;
 
-    transform:translateX(-50%);
+    transform: translateX(calc(-51% + 70px));
 
     z-index:5;
 
@@ -515,25 +780,27 @@ HERO tu m'a fatiguuer heeeeeeeee
 
 .hero-bottom i{
 
-    font-size:13px;   /* Avant : 38px */
+    font-size:23px;   /* Avant : 38px */
 
     color:#173d88;
 
-    margin-bottom:10px;
+    margin-bottom:2px;
 }
 
 .hero-bottom h3{
 
     color:#173d88;
 
-    font-size:10px;   /* Avant : 34px */
+    font-size:15px;   /* Avant : 34px */
 
-    line-height:1.4;
+    line-height:1.5;
 
     font-weight:1000;
 
     margin:0;
 }
+
+
 .btn-primary{
 
     margin-top:45px;
@@ -550,9 +817,10 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     margin-top:18px;
 
-    padding:14px 8px;
+    padding:14px 10px;
 
-    background:#3949db;
+    background:#3B5998
+;
 
     color:white;
 
@@ -568,7 +836,7 @@ HERO tu m'a fatiguuer heeeeeeeee
 
 .btn-primary:hover{
 
-    background:#1f8a46;
+    background:#2E7D32;
 
 }
 
@@ -576,7 +844,7 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     position:absolute;
 
-    bottom:-120px;
+    bottom:-140px;
 
     left:50%;
 
@@ -616,11 +884,360 @@ HERO tu m'a fatiguuer heeeeeeeee
 
   
 
-  
-  
-  
-  
-  /****************************************
+
+
+
+
+
+
+
+ /*************
+ Historique
+ *****************/ 
+
+.about-home{
+
+    padding:90px 0;
+
+    background:#fff;
+
+}
+
+.container{
+
+    width:90%;
+
+    max-width:1200px;
+
+    margin:auto;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:60px;
+
+}
+
+.about-image{
+
+    flex:1;
+
+}
+
+.about-image img{
+
+    width:100%;
+
+    border-radius:18px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.15);
+
+}
+
+.about-content{
+
+    flex:1;
+
+}
+
+.section-subtitle{
+
+    color:#2E7D32;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+
+}
+
+.about-content h2{
+
+    margin:15px 0 20px;
+
+    font-size:38px;
+
+    color:#183C84;
+
+    line-height:1.3;
+
+}
+
+.about-content p{
+
+    font-size:17px;
+
+    color:#555;
+
+    line-height:1.8;
+
+    text-align:justify;
+
+}
+
+.btn-about{
+
+    display:inline-block;
+
+    margin-top:30px;
+
+    padding:14px 28px;
+
+    background:#183C84;
+
+    color:#fff;
+
+    text-decoration:none;
+
+    border-radius:10px;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.btn-about:hover{
+
+    background:#2E7D32;
+
+}
+
+@media(max-width:991px){
+
+    .container{
+
+        flex-direction:column;
+
+        text-align:center;
+
+    }
+
+    .about-content h2{
+
+        font-size:30px;
+
+    }
+
+}
+
+
+
+
+/****************************************
+ FORMATIONS
+****************************************/
+
+/****************************************
+ FORMATIONS ACCUEIL
+****************************************/
+
+.home-formations{
+
+    padding:90px 0;
+
+    background:#f8fbff;
+
+}
+
+.home-formations-container{
+
+    width:90%;
+
+    max-width:1200px;
+
+    margin:auto;
+
+}
+
+.home-formations-header{
+
+    text-align:center;
+    margin-bottom:60px;
+
+}
+
+.home-formations-header span{
+
+    display:block;
+
+    color:var(--primary);   /* ou #3B5998 */
+
+    font-size:25px;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    letter-spacing:2px;
+
+    margin-bottom:12px;
+
+}
+
+.home-formations-header h2{
+
+    font-size:2.5rem;
+
+    color:#0b1f3a;
+
+    font-weight:700;
+
+    margin:0;
+
+}
+
+.home-formations-header p{
+
+    max-width:700px;
+
+    margin:auto;
+
+    color:#666;
+
+    line-height:1.8;
+
+}
+
+.home-formations-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+
+    gap:30px;
+
+}
+
+.home-formation-card{
+
+    background:#fff;
+
+    padding:35px 25px;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+}
+
+.home-formation-card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 18px 35px rgba(0,0,0,.15);
+
+}
+
+.home-formation-icon{
+
+    width:70px;
+
+    height:70px;
+
+    margin:auto;
+
+    margin-bottom:20px;
+
+    border-radius:50%;
+
+    background:#eaf2ff;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:32px;
+
+}
+
+.home-formation-card h3{
+
+    color:#0b1f3a;
+
+    margin-bottom:15px;
+
+    font-size:1.3rem;
+
+}
+
+.home-formation-card p{
+
+    color:#666;
+
+    line-height:1.7;
+
+}
+
+.home-formations-button{
+
+    text-align:center;
+
+    margin-top:50px;
+
+}
+
+.home-btn-formation{
+
+    display:inline-block;
+
+    background:#3B5998;
+
+    color:#fff;
+
+    padding:15px 35px;
+
+    border-radius:50px;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.home-btn-formation:hover{
+
+    background:#2E7D32;
+
+    color:#fff;
+
+    transform:translateY(-4px);
+
+}
+
+@media (max-width:768px){
+
+    .home-formations-header h2{
+
+        font-size:2rem;
+
+    }
+
+    .home-formations-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+
+
+
+
+/****************************************
   SECTIONS hero bocoutes fiiiiii
   ****************************************/
 
@@ -729,7 +1346,12 @@ HERO tu m'a fatiguuer heeeeeeeee
 
   }
 
-  /****************************************
+  /********
+  
+  les cartes sont pour actu et  stati
+  ********/
+
+/****************************************
   CARDS
   ****************************************/
 
@@ -787,52 +1409,195 @@ HERO tu m'a fatiguuer heeeeeeeee
 
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /****************************************
- STATISTIQUES
+ actualites
 ****************************************/
 
-.cards.four .card h3{
+/****************************************
+ACTUALITES
+****************************************/
 
-    font-size:42px;
+.news-card{
+
+    overflow:hidden;
+
+    padding:0;
+
+    text-decoration:none;
+
+    color:inherit;
+
+    cursor:pointer;
+
+    position:relative;
+
+}
+
+.news-card img{
+
+    width:100%;
+
+    height:220px;
+
+    object-fit:cover;
+
+    transition:.6s;
+
+}
+
+.news-content{
+
+    padding:25px;
+
+}
+
+.news-content span{
+
+    display:inline-block;
+
+    background:#2E7D32;
+
+    color:#fff;
+
+    padding:6px 14px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+    margin-bottom:15px;
+
+}
+
+.news-content h4{
+
+    color:var(--primary);
 
     font-weight:800;
 
-    color:var(--primary);
+}
 
-    margin-bottom:12px;
+.news-content p{
+
+    margin-top:15px;
+
+    color:#555;
 
 }
 
-/****************************************
- FORMATIONS
-****************************************/
+.news-card:hover{
 
-.cards.three .card h4{
+    transform:translateY(-12px);
 
-    font-size:22px;
-
-    color:var(--primary);
+    box-shadow:0 20px 45px rgba(59,89,152,.25);
 
 }
+
+.news-card:hover img{
+
+    transform:scale(1.12);
+
+}
+
+.news-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-120%;
+
+    left:-40%;
+
+    width:50%;
+
+    height:300%;
+
+    background:rgba(255,255,255,.35);
+
+    transform:rotate(25deg);
+
+    animation:shine 4s infinite;
+
+}
+
+@keyframes shine{
+
+    0%{
+
+        left:-60%;
+
+    }
+
+    100%{
+
+        left:160%;
+
+    }
+
+}
+
+
+
+
 
 /****************************************
  PARTENAIRES
 ****************************************/
 
+.partenaires{
+
+    overflow:hidden;
+
+}
+
+.section-subtitle{
+
+    max-width:700px;
+
+    margin:15px auto 40px;
+
+    text-align:center;
+
+    color:#666;
+
+    line-height:1.8;
+
+}
+
+.partner-slider{
+
+    overflow:hidden;
+
+    width:100%;
+
+    position:relative;
+
+}
+
+.partner-track{
+
+    display:flex;
+
+    width:max-content;
+
+    animation:defilement 30s linear infinite;
+
+}
+
+.partner-track:hover{
+
+    animation-play-state:paused;
+
+}
+
 .partner{
+
+    width:220px;
+
+    height:160px;
+
+    margin:0 15px;
 
     display:flex;
 
@@ -840,15 +1605,136 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     align-items:center;
 
-    min-height:140px;
+    background:#fff;
 
-    font-size:22px;
+    border-radius:20px;
 
-    font-weight:700;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+    flex-shrink:0;
+
+    transition:.3s;
+
+}
+
+.partner:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.partner img{
+
+    max-width:150px;
+
+    max-height:90px;
+
+    object-fit:contain;
+
+}
+
+@keyframes defilement{
+
+    0%{
+
+        transform:translateX(0);
+
+    }
+
+    100%{
+
+        transform:translateX(-50%);
+
+    }
+
+}
+
+
+
+
+/****************************************
+STATISTIQUES
+****************************************/
+
+.stats-section{
+
+    background:linear-gradient(135deg,#f8fbff,#eef6ff);
+
+}
+
+.stat-card{
+
+    text-align:center;
+
+    padding:35px 20px;
+
+    border-radius:20px;
+
+    background:#fff;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.08);
+
+    transition:.4s;
+
+    animation:pulse 3s infinite;
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-12px) scale(1.05);
+
+    box-shadow:0 25px 50px rgba(59,89,152,.25);
+
+}
+
+.stat-card h3{
+
+    font-size:55px;
 
     color:var(--primary);
 
+    font-weight:900;
+
+    margin-bottom:10px;
+
+    text-shadow:0 0 12px rgba(59,89,152,.25);
+
 }
+
+.stat-card p{
+
+    font-size:18px;
+
+    font-weight:600;
+
+    color:#555;
+
+}
+
+@keyframes pulse{
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.03);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
+
+
 
 /****************************************
  SECTION INSCRIPTION

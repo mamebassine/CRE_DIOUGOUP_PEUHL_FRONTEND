@@ -13,6 +13,8 @@ import Actualites from "../views/public/Actualites.vue";
 import Galerie from "../views/public/Galerie.vue";
 import Contact from "../views/public/Contact.vue";
 import Partenaires from "../views/public/Partenaires.vue";
+// import FormulaireInscription from "../views/public/FormulaireInscription.vue";
+
 
 // Auth
 import Login from "../views/auth/Login.vue";
@@ -105,6 +107,15 @@ const routes = [
         component: Register
     },
 
+
+// =========================
+    // a enlever apres 
+    // =========================
+    //  {
+    //     path: "/inscription",
+    //     name: "Inscription",
+    //     component: FormulaireInscription
+    // },
 
     // =========================
     // DASHBOARD ADMIN
