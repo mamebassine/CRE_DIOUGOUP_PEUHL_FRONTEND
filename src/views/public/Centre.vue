@@ -631,6 +631,9 @@ Supérieur, de la Recherche et de l’Innovation du Sénégal.
 
 
 
+
+
+
 <style scoped>
 
 
@@ -643,12 +646,13 @@ background:white;
 
 
 .container{
+   
 
 width:90%;
 
 max-width:1200px;
 
-margin:auto;
+margin: 32px auto 0;
 
 display:flex;
 

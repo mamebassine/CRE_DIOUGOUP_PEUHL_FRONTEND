@@ -753,12 +753,12 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     color:white;
 
-    font-size:16px;
+    font-size:17px;
 
     line-height:1.7;
 
     max-width:650px;
-    font-weight:450;
+    font-weight:500;
 
 
 }
@@ -824,7 +824,7 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     color:white;
 
-    border-radius:17px;
+    border-radius:15px;
 
     text-decoration:none;
 
@@ -945,7 +945,7 @@ HERO tu m'a fatiguuer heeeeeeeee
 
 .section-subtitle{
 
-    color:#2E7D32;
+    color: #2E7D32;
 
     font-weight:700;
 
@@ -961,7 +961,7 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     font-size:38px;
 
-    color:#183C84;
+    color: #3B5998;
 
     line-height:1.3;
 
@@ -971,7 +971,7 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     font-size:17px;
 
-    color:#555;
+    color: #000;
 
     line-height:1.8;
 
@@ -985,15 +985,15 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     margin-top:30px;
 
-    padding:14px 28px;
+    padding:14px 10px;
 
-    background:#183C84;
+    background: #3B5998;
 
     color:#fff;
 
     text-decoration:none;
 
-    border-radius:10px;
+    border-radius:15px;
 
     font-weight:700;
 
@@ -1040,7 +1040,7 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     padding:90px 0;
 
-    background:#f8fbff;
+    background: #f8fbff;
 
 }
 
@@ -1083,7 +1083,7 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     font-size:2.5rem;
 
-    color:#0b1f3a;
+    color: #0b1f3a;
 
     font-weight:700;
 
@@ -1195,9 +1195,9 @@ HERO tu m'a fatiguuer heeeeeeeee
 
     color:#fff;
 
-    padding:15px 35px;
+    padding:14px 10px;
 
-    border-radius:50px;
+    border-radius:15px;
 
     text-decoration:none;
 
@@ -1453,15 +1453,17 @@ ACTUALITES
 
 .news-content span{
 
+    font-weight:600;
+
     display:inline-block;
 
-    background:#2E7D32;
+    background: #2E7D32;
 
     color:#fff;
 
-    padding:6px 14px;
+    padding:14px 10px;
 
-    border-radius:30px;
+    border-radius:15px;
 
     font-size:13px;
 
@@ -1559,7 +1561,7 @@ ACTUALITES
 
     text-align:center;
 
-    color:#666;
+    color: #2E7D32;
 
     line-height:1.8;
 
@@ -1744,7 +1746,21 @@ STATISTIQUES
 
     width:100%;
 
-    background:var(--primary);
+    background: linear-gradient(
+    120deg,
+    #3B5998 0%,
+    #1F2937 45%,
+    #2E7D32 100%
+);
+
+    /*
+    background: linear-gradient(
+    135deg,
+    #3B5998,
+    #2E7D32
+);
+    */
+
 
     padding:80px 20px;
 

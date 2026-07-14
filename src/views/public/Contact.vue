@@ -695,9 +695,9 @@ background:#3B5998;
 
 color:#FFFFFF;
 
-padding:12px 25px;
+padding:14px 10px;
 
-border-radius:30px;
+border-radius:15px;
 
 text-decoration:none;
 
@@ -806,7 +806,7 @@ background:#FFFFFF;
 
 padding:40px;
 
-border-radius:25px;
+border-radius:15px;
 
 
 box-shadow:
@@ -917,9 +917,9 @@ color:#FFFFFF;
 
 border:none;
 
-padding:15px 35px;
+padding:14px 10px;
 
-border-radius:30px;
+border-radius:15px;
 
 font-weight:700;
 

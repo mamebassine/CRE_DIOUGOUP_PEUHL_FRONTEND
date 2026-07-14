@@ -532,9 +532,9 @@ const allerInscription = () => {
 =========================== */
 
 .formations-page{
-    background:#f5f8fc;
-    color:#1f2937;
-      margin-top:40px;
+    background: #f5f8fc;
+    color: #1f2937;
+      margin-top:70px;
 
 }
 
@@ -554,6 +554,7 @@ const allerInscription = () => {
     font-size:3rem;
     font-weight:700;
     margin:20px 0;
+    color: #3B5998;
 }
 
 .hero-formations p{
@@ -585,12 +586,12 @@ const allerInscription = () => {
 
 .section-title h2{
     font-size:2.5rem;
-    color:#0056b3;
+    color: #3B5998;
     margin-bottom:15px;
 }
 
 .section-title p{
-    color:#666;
+    color: #666;
     font-size:1.05rem;
 }
 
@@ -616,7 +617,7 @@ const allerInscription = () => {
     cursor:pointer;
     box-shadow:0 10px 25px rgba(0,0,0,.08);
     transition:.35s;
-    border-top:5px solid #0056b3;
+    border-top:5px solid #3B5998;
 }
 
 .formation-card:hover{
@@ -637,7 +638,7 @@ const allerInscription = () => {
 }
 
 .formation-card h3{
-    color:#0056b3;
+    color: #3B5998;
     margin-bottom:15px;
     font-size:1.4rem;
 }
@@ -649,9 +650,14 @@ const allerInscription = () => {
 }
 
 .voir-plus{
-    color:#0056b3;
+    color: #fff;
     font-weight:600;
     transition:.3s;
+    background: #3B5998;
+     padding:14px 10px;
+
+    border-radius:15px;
+
 }
 
 .formation-card:hover .voir-plus{
@@ -704,6 +710,7 @@ const allerInscription = () => {
 ==================================*/
 
 .close-btn{
+  color: #3B5998;
     position:absolute;
     top:18px;
     right:18px;
@@ -711,14 +718,14 @@ const allerInscription = () => {
     height:40px;
     border:none;
     border-radius:50%;
-    background:#f1f1f1;
+    background: #f1f1f1;
     cursor:pointer;
     font-size:22px;
     transition:.3s;
 }
 
 .close-btn:hover{
-    background:#0056b3;
+    background: #2E7D32;
     color:#fff;
 }
 
@@ -731,7 +738,7 @@ const allerInscription = () => {
     height:90px;
     margin:auto;
     margin-bottom:25px;
-    background:#eaf3ff;
+    background: #eaf3ff;
     border-radius:50%;
     display:flex;
     justify-content:center;
@@ -741,7 +748,7 @@ const allerInscription = () => {
 
 .formation-modal h2{
     text-align:center;
-    color:#0056b3;
+    color: #3B5998;
     margin-bottom:20px;
 }
 
@@ -764,14 +771,14 @@ const allerInscription = () => {
 }
 
 .info-item{
-    background:#f8f9fb;
+    background: #f8f9fb;
     padding:15px;
     border-radius:10px;
 }
 
 .info-item strong{
     display:block;
-    color:#0056b3;
+    color: #3B5998;
     margin-bottom:6px;
 }
 
@@ -800,7 +807,7 @@ const allerInscription = () => {
     padding:15px;
     border:none;
     border-radius:12px;
-    background:#0056b3;
+    background: #3B5998;
     color:#fff;
     font-size:17px;
     font-weight:600;
@@ -809,7 +816,7 @@ const allerInscription = () => {
 }
 
 .postuler-btn:hover{
-    background:#003f82;
+    background: #2E7D32;
 }
 
 /*==================================

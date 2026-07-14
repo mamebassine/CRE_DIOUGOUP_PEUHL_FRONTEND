@@ -280,13 +280,13 @@ BOUTON CONNEXION
 
     display:inline-block;
 
-    padding:12px 28px;
+    padding:14px 10px;
 
     background:#3B5998;
 
     color:white !important;
 
-    border-radius:30px;
+    border-radius: 15px;
 
     text-decoration:none;
 

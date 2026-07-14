@@ -687,9 +687,9 @@ background:#3B5998;
 
 color:white;
 
-padding:10px 22px;
+padding:14px 10px;
 
-border-radius:30px;
+border-radius:15px;
 
 text-decoration:none;
 
@@ -825,11 +825,11 @@ margin-top:30px;
 
 .newsletter-form input{
 
-padding:15px;
+padding:13px;
 
 width:350px;
 
-border-radius:30px;
+border-radius:10px;
 
 border:1px solid #ddd;
 
@@ -839,15 +839,15 @@ border:1px solid #ddd;
 
 .newsletter-form button{
 
-background:#2E7D32;
+background: #2E7D32;
 
 color:white;
 
 border:none;
 
-padding:15px 30px;
+padding:14px 10px;
 
-border-radius:30px;
+border-radius:15px;
 
 }
 
