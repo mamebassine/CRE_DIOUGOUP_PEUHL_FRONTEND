@@ -17,6 +17,7 @@ import Partenaires from "../views/public/Partenaires.vue";
 
 
 // Auth
+import { useAuthStore } from "../stores/auth";
 import Login from "../views/auth/Login.vue";
 import Register from "../views/auth/Register.vue";
 
@@ -120,55 +121,58 @@ const routes = [
     // =========================
     // DASHBOARD ADMIN
     // =========================
-    {
-        path: "/dashboard",
-        component: DashboardLayout,
-        children: [
-
-            {
-                path: "",
-                name: "dashboard",
-                component: Dashboard
-            },
-
-            {
-                path: "profil",
-                name: "profil",
-                component: Profil
-            },
-
-            {
-                path: "apprenants",
-                name: "apprenants",
-                component: Apprenants
-            },
-
-            {
-                path: "diplomes",
-                name: "diplomes",
-                component: Diplomes
-            },
-
-            {
-                path: "boite-idees",
-                name: "boite-idees",
-                component: BoiteIdees
-            },
-
-            {
-                path: "users",
-                name: "users",
-                component: Users
-            },
-
-            {
-                path: "statistiques",
-                name: "statistiques",
-                component: Statistiques
-            }
-
-        ]
+   {
+    path: "/dashboard",
+    component: DashboardLayout,
+    meta: {
+        requiresAuth: true
     },
+    children: [
+
+        {
+            path: "",
+            name: "dashboard",
+            component: Dashboard
+        },
+
+        {
+            path: "profil",
+            name: "profil",
+            component: Profil
+        },
+
+        {
+            path: "apprenants",
+            name: "apprenants",
+            component: Apprenants
+        },
+
+        {
+            path: "diplomes",
+            name: "diplomes",
+            component: Diplomes
+        },
+
+        {
+            path: "boite-idees",
+            name: "boite-idees",
+            component: BoiteIdees
+        },
+
+        {
+            path: "users",
+            name: "users",
+            component: Users
+        },
+
+        {
+            path: "statistiques",
+            name: "statistiques",
+            component: Statistiques
+        }
+
+    ]
+},
 
 
     // =========================
@@ -205,5 +209,24 @@ const router = createRouter({
 
 });
 
+router.beforeEach((to, from, next) => {
 
+    const auth = useAuthStore();
+
+    // Vérifie si la route nécessite une authentification
+    if (to.matched.some(record => record.meta.requiresAuth) && !auth.isAuthenticated) {
+        return next("/login");
+    }
+
+    // Empêcher un utilisateur connecté d'aller sur login/register
+    if (
+        (to.name === "login" || to.name === "register") &&
+        auth.isAuthenticated
+    ) {
+        return next("/dashboard");
+    }
+
+    next();
+
+});
 export default router;

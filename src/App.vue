@@ -7,6 +7,28 @@
 <script setup>
 
 import { RouterView } from "vue-router";
+import { onMounted } from "vue";
+import { useAuthStore } from "./stores/auth";
+
+const auth = useAuthStore();
+
+onMounted(async () => {
+
+    if (auth.token) {
+
+        try {
+
+            await auth.profile();
+
+        } catch (error) {
+
+            await auth.logout();
+
+        }
+
+    }
+
+});
 
 </script>
 
