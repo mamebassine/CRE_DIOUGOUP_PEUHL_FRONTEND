@@ -140,12 +140,12 @@
 
     </ul>
 
-    <button
+   <RouterLink
+    to="/register"
     class="postuler-btn"
-    @click="postulerFormation"
 >
-    Postuler
-</button>
+    Postuler →
+</RouterLink>
 
   </div>
 
@@ -803,7 +803,7 @@ const allerInscription = () => {
 ==================================*/
 
 .postuler-btn{
-    width:100%;
+    display: inline-block;
     padding:15px;
     border:none;
     border-radius:12px;
@@ -813,11 +813,14 @@ const allerInscription = () => {
     font-weight:600;
     cursor:pointer;
     transition:.3s;
+        text-decoration: none;
+
 }
 
 .postuler-btn:hover{
     background: #2E7D32;
 }
+
 
 /*==================================
       RESPONSIVE
