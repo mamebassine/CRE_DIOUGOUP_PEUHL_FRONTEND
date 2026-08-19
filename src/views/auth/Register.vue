@@ -129,8 +129,21 @@
 
 
 
+            <div class="input-group">
 
-                <div class="input-group">
+                <label>Formation choisie</label>
+
+                <input
+                    type="text"
+                    v-model="form.formation"
+                    readonly
+                >
+
+            </div>
+
+
+
+            <div class="input-group">
 
                     <label>
                         Mot de passe
@@ -259,11 +272,12 @@
 <script setup>
 
 import { ref } from "vue"
-import { useRouter, RouterLink } from "vue-router"
+import { useRouter, useRoute, RouterLink } from "vue-router"
 import { useAuthStore } from "../../stores/auth"
 
 
 const router = useRouter()
+const route = useRoute()
 
 const auth = useAuthStore()
 
@@ -277,14 +291,13 @@ const error = ref("")
 
 
 const form = ref({
-
-    nom:"",
-    prenom:"",
-    email:"",
-    telephone:"",
-    password:"",
-    password_confirmation:""
-
+    nom: "",
+    prenom: "",
+    email: "",
+    telephone: "",
+    formation: route.query.formation || "",
+    password: "",
+    password_confirmation: ""
 })
 
 

@@ -47,25 +47,43 @@ export const useAuthStore = defineStore("auth",{
 
         },
 
-        async profile() {
+        
+
+async profile() {
 
     try {
 
         const response = await authService.profile();
 
-        this.user = response.data;
 
-        localStorage.setItem("user", JSON.stringify(this.user));
+        // récupérer le vrai user
+        this.user = response.data.user 
+            ? response.data.user 
+            : response.data;
+
+
+        localStorage.setItem(
+            "user",
+            JSON.stringify(this.user)
+        );
+
 
         return response;
 
+
     } catch (error) {
 
+
         throw error;
+
 
     }
 
 },
+
+
+
+
 
         async logout() {
 

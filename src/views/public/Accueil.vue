@@ -132,12 +132,21 @@
 </section>
 
 
+
+
+
+
+
+
+<!-- ================= FORMATIONS ================= -->
+
 <!-- ================= FORMATIONS ================= -->
 
 <section class="home-formations">
 
     <div class="home-formations-container">
 
+        <!-- EN-TÊTE -->
         <div class="home-formations-header">
 
             <span>Nos formations</span>
@@ -148,89 +157,63 @@
 
             <p>
                 Le CRE de Diougoup Peuhl propose des formations professionnelles
-                dans les domaines du numérique, de l'informatique, de
-                l'entrepreneuriat, de l'agroalimentaire et des énergies
-                renouvelables.
+                dans plusieurs domaines.
             </p>
 
         </div>
 
+
+        <!-- ================= CARTES ================= -->
+
         <div class="home-formations-grid">
 
-            <div class="home-formation-card">
+            <RouterLink
+                v-for="formation in formations"
+                :key="formation.id"
+                to="/formations"
+                class="home-formation-card"
+            >
 
-                <div class="home-formation-icon">💻</div>
+                <!-- IMAGE -->
+                <div class="home-formation-image">
 
-                <h3>Bureautique</h3>
+                    <img
+                        v-if="formation.icone"
+                        :src="getFormationImage(formation.icone)"
+                        :alt="formation.nom"
+                        @error="imageErreur"
+                    >
 
-                <p>
-                    MS Windows, Word, Excel et PowerPoint.
-                </p>
+                    <!-- Image par défaut -->
+                    <div
+                        v-else
+                        class="formation-image-placeholder"
+                    >
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
 
-            </div>
+                </div>
 
-            <div class="home-formation-card">
 
-                <div class="home-formation-icon">🛠️</div>
+                <!-- CONTENU -->
+                <div class="home-formation-content">
 
-                <h3>Maintenance Informatique</h3>
+                    <h3>
+                        {{ formation.nom }}
+                    </h3>
 
-                <p>
-                    Installation, maintenance et dépannage des ordinateurs.
-                </p>
+                    <p>
+                        {{ formation.resume }}
+                    </p>
 
-            </div>
+                </div>
 
-            <div class="home-formation-card">
-
-                <div class="home-formation-icon">🎨</div>
-
-                <h3>Infographie</h3>
-
-                <p>
-                    Photoshop et Illustrator pour la création graphique.
-                </p>
-
-            </div>
-
-            <div class="home-formation-card">
-
-                <div class="home-formation-icon">🌐</div>
-
-                <h3>Développement Web</h3>
-
-                <p>
-                    Création de sites web modernes et applications web.
-                </p>
-
-            </div>
-
-            <div class="home-formation-card">
-
-                <div class="home-formation-icon">🚀</div>
-
-                <h3>Entrepreneuriat</h3>
-
-                <p>
-                    Développement personnel et création d'entreprise.
-                </p>
-
-            </div>
-
-            <div class="home-formation-card">
-
-                <div class="home-formation-icon">☀️</div>
-
-                <h3>Énergies renouvelables</h3>
-
-                <p>
-                    Formation sur les kits solaires et les solutions durables.
-                </p>
-
-            </div>
+            </RouterLink>
 
         </div>
 
+
+        <!-- BOUTON -->
         <div class="home-formations-button">
 
             <RouterLink
@@ -245,7 +228,6 @@
     </div>
 
 </section>
-
 
 <!-- ================= PARTENAIRES ================= -->
 
@@ -495,16 +477,76 @@
 
 
 
-      <script setup>
+<script setup>
 
-      import { RouterLink } from "vue-router";
-      import centreImage from "@/assets/images/recherche.png";
+import { ref, onMounted } from "vue";
+import { RouterLink } from "vue-router";
+import { getFormations } from "@/services/formationService";
 
-      
-      
-      import { onMounted } from "vue";
 
-onMounted(() => {
+// ================= FORMATIONS =================
+
+const formations = ref([]);
+
+
+// ================= IMAGE FORMATION =================
+
+const getFormationImage = (icone) => {
+
+    if (!icone) {
+        return null;
+    }
+
+    // Si Laravel retourne une URL complète
+    if (
+        icone.startsWith("http://") ||
+        icone.startsWith("https://")
+    ) {
+        return icone;
+    }
+
+    // Si l'image est enregistrée dans storage/app/public
+    return `http://127.0.0.1:8000/storage/${icone}`;
+};
+
+
+// ================= ERREUR IMAGE =================
+
+const imageErreur = (event) => {
+
+    event.target.style.display = "none";
+
+};
+
+
+// ================= CHARGER FORMATIONS =================
+
+const chargerFormations = async () => {
+
+    try {
+
+        const response = await getFormations();
+
+        formations.value =
+            response.data.data ?? response.data;
+
+        console.log("Formations accueil :", formations.value);
+
+    } catch (error) {
+
+        console.error(
+            "Erreur chargement formations :",
+            error
+        );
+
+    }
+
+};
+
+
+// ================= STATISTIQUES =================
+
+const chargerCompteurs = () => {
 
     const counters = document.querySelectorAll(".counter");
 
@@ -538,12 +580,20 @@ onMounted(() => {
 
     });
 
+};
+
+
+// ================= INITIALISATION =================
+
+onMounted(() => {
+
+    chargerFormations();
+
+    chargerCompteurs();
+
 });
-      
-      </script>
 
-
-
+</script>
 
 
 
@@ -1028,212 +1078,466 @@ HERO tu m'a fatiguuer heeeeeeeee
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 /****************************************
  FORMATIONS
 ****************************************/
 
 /****************************************
- FORMATIONS ACCUEIL
+ SECTION
 ****************************************/
 
-.home-formations{
+.home-formations {
 
-    padding:90px 0;
+    padding: 90px 0;
 
     background: #f8fbff;
 
 }
 
-.home-formations-container{
 
-    width:90%;
+/****************************************
+ CONTENEUR
+****************************************/
 
-    max-width:1200px;
+.home-formations-container {
 
-    margin:auto;
+    width: 86%;
 
-}
+    max-width: 1120px;
 
-.home-formations-header{
-
-    text-align:center;
-    margin-bottom:60px;
+    margin: auto;
 
 }
 
-.home-formations-header span{
 
-    display:block;
+/****************************************
+ EN-TÊTE
+ NE PAS MODIFIER
+****************************************/
 
-    color:var(--primary);   /* ou #3B5998 */
+.home-formations-header {
 
-    font-size:25px;
+    text-align: center;
 
-    font-weight:700;
-
-    text-transform:uppercase;
-
-    letter-spacing:2px;
-
-    margin-bottom:12px;
+    margin-bottom: 55px;
 
 }
 
-.home-formations-header h2{
 
-    font-size:2.5rem;
+.home-formations-header span {
+
+    display: block;
+
+    color: var(--primary);
+
+    font-size: 25px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 12px;
+
+}
+
+
+.home-formations-header h2 {
+
+    font-size: 2.5rem;
 
     color: #0b1f3a;
 
-    font-weight:700;
+    font-weight: 700;
 
-    margin:0;
-
-}
-
-.home-formations-header p{
-
-    max-width:700px;
-
-    margin:auto;
-
-    color:#666;
-
-    line-height:1.8;
+    margin: 0;
 
 }
 
-.home-formations-grid{
 
-    display:grid;
+.home-formations-header p {
 
-    grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+    max-width: 700px;
 
-    gap:30px;
+    margin: auto;
 
-}
+    color: #666;
 
-.home-formation-card{
-
-    background:#fff;
-
-    padding:35px 25px;
-
-    border-radius:18px;
-
-    text-align:center;
-
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-
-    transition:.35s;
+    line-height: 1.8;
 
 }
 
-.home-formation-card:hover{
 
-    transform:translateY(-10px);
+/****************************************
+ GRILLE DES CARTES
+ 3 CARTES PAR LIGNE
+****************************************/
 
-    box-shadow:0 18px 35px rgba(0,0,0,.15);
+.home-formations-grid {
 
-}
+    display: grid;
 
-.home-formation-icon{
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
 
-    width:70px;
+    column-gap: 35px;
 
-    height:70px;
+    row-gap: 35px;
 
-    margin:auto;
-
-    margin-bottom:20px;
-
-    border-radius:50%;
-
-    background:#eaf2ff;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    font-size:32px;
+    width: 100%;
 
 }
 
-.home-formation-card h3{
 
-    color:#0b1f3a;
+/****************************************
+ CARTE
+****************************************/
 
-    margin-bottom:15px;
+.home-formation-card {
 
-    font-size:1.3rem;
+    width: 100%;
 
-}
+    display: flex;
 
-.home-formation-card p{
+    flex-direction: column;
 
-    color:#666;
+    background: #ffffff;
 
-    line-height:1.7;
+    border: 1px solid #e1e6ed;
 
-}
+    border-radius: 14px;
 
-.home-formations-button{
+    overflow: hidden;
 
-    text-align:center;
+    text-decoration: none;
 
-    margin-top:50px;
+    color: inherit;
 
-}
+    box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.06);
 
-.home-btn-formation{
-
-    display:inline-block;
-
-    background:#3B5998;
-
-    color:#fff;
-
-    padding:14px 10px;
-
-    border-radius:15px;
-
-    text-decoration:none;
-
-    font-weight:600;
-
-    transition:.3s;
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
 
 }
 
-.home-btn-formation:hover{
 
-    background:#2E7D32;
+/****************************************
+ HOVER CARTE
+****************************************/
 
-    color:#fff;
+.home-formation-card:hover {
 
-    transform:translateY(-4px);
+    transform: translateY(-6px);
+
+    border-color:
+        rgba(59, 89, 152, 0.25);
+
+    box-shadow:
+        0 12px 28px rgba(15, 23, 42, 0.12);
 
 }
 
-@media (max-width:768px){
 
-    .home-formations-header h2{
+/****************************************
+ IMAGE DE LA FORMATION
+****************************************/
 
-        font-size:2rem;
+.home-formation-image {
+
+    width: 100%;
+
+    height: 130px;
+
+    overflow: hidden;
+
+    background: #edf3fc;
+
+}
+
+
+/****************************************
+ IMAGE
+****************************************/
+
+.home-formation-image img {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    transition:
+        transform 0.45s ease;
+
+}
+
+
+/****************************************
+ PETIT ZOOM AU SURVOL
+****************************************/
+
+.home-formation-card:hover
+.home-formation-image img {
+
+    transform: scale(1.04);
+
+}
+
+
+/****************************************
+ CONTENU DE LA CARTE
+****************************************/
+
+.home-formation-content {
+
+    padding: 17px 18px 18px;
+
+    text-align: left;
+
+}
+
+
+/****************************************
+ TITRE DE LA FORMATION
+****************************************/
+
+.home-formation-content h3 {
+
+    margin: 0 0 8px;
+
+    color: #0b1f3a;
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+    line-height: 1.35;
+
+    transition:
+        color 0.25s ease;
+
+}
+
+
+/****************************************
+ TITRE AU SURVOL
+****************************************/
+
+.home-formation-card:hover
+.home-formation-content h3 {
+
+    color: #3B5998;
+
+}
+
+
+/****************************************
+ DESCRIPTION
+****************************************/
+
+.home-formation-content p {
+
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 2;
+
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+
+}
+
+
+/****************************************
+ IMAGE PAR DÉFAUT
+****************************************/
+
+.formation-image-placeholder {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef4ff,
+            #e5edfb
+        );
+
+}
+
+
+/****************************************
+ ICÔNE PAR DÉFAUT
+****************************************/
+
+.formation-image-placeholder i {
+
+    font-size: 40px;
+
+    color: #3B5998;
+
+    opacity: 0.55;
+
+}
+
+
+/****************************************
+ BOUTON
+****************************************/
+
+.home-formations-button {
+
+    text-align: center;
+
+    margin-top: 45px;
+
+}
+
+
+.home-btn-formation {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 12px 20px;
+
+    background: #3B5998;
+
+    color: #ffffff;
+
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    transition:
+        background 0.3s ease,
+        transform 0.3s ease;
+
+}
+
+
+.home-btn-formation:hover {
+
+    background: #2E7D32;
+
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+}
+
+
+/****************************************
+ TABLETTE
+****************************************/
+
+@media (max-width: 992px) {
+
+    .home-formations-container {
+
+        width: 88%;
 
     }
 
-    .home-formations-grid{
 
-        grid-template-columns:1fr;
+    .home-formations-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        column-gap: 30px;
+
+        row-gap: 30px;
 
     }
 
 }
 
 
+/****************************************
+ MOBILE
+****************************************/
+
+@media (max-width: 650px) {
+
+    .home-formations {
+
+        padding: 65px 0;
+
+    }
+
+
+    .home-formations-container {
+
+        width: 88%;
+
+    }
+
+
+    .home-formations-grid {
+
+        grid-template-columns: 1fr;
+
+        gap: 25px;
+
+    }
+
+
+    .home-formation-image {
+
+        height: 160px;
+
+    }
+
+
+    .home-formations-header h2 {
+
+        font-size: 2rem;
+
+    }
+
+}
 
 
 

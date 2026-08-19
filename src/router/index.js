@@ -13,7 +13,8 @@ import Actualites from "../views/public/Actualites.vue";
 import Galerie from "../views/public/Galerie.vue";
 import Contact from "../views/public/Contact.vue";
 import Partenaires from "../views/public/Partenaires.vue";
-// import FormulaireInscription from "../views/public/FormulaireInscription.vue";
+
+import InscriptionFormation from "../views/public/InscriptionFormation.vue";
 
 
 // Auth
@@ -24,16 +25,12 @@ import Register from "../views/auth/Register.vue";
 // Dashboard
 import Dashboard from "../views/dashboard/Dashboard.vue";
 import Profil from "../views/dashboard/Profil.vue";
-import Apprenants from "../views/dashboard/Apprenants.vue";
-import Diplomes from "../views/dashboard/Diplomes.vue";
-import BoiteIdees from "../views/dashboard/BoiteIdees.vue";
-import Users from "../views/dashboard/Users.vue";
 import Statistiques from "../views/dashboard/Statistiques.vue";
-
 
 const routes = [
 
-    // =========================
+
+// =========================
     // ESPACE PUBLIC
     // =========================
     {
@@ -87,10 +84,25 @@ const routes = [
                 path: "partenaires",
                 name: "partenaires",
                 component: Partenaires
-            }
+            },
+          
 
         ]
     },
+
+
+
+// =========================
+// INSCRIPTION FORMATION
+// =========================
+
+{
+    path: "/inscription-formation",
+    name: "InscriptionFormation",
+    component: InscriptionFormation
+},
+
+
 
 
     // =========================
@@ -108,72 +120,220 @@ const routes = [
         component: Register
     },
 
-
-// =========================
-    // a enlever apres 
     // =========================
-    //  {
-    //     path: "/inscription",
-    //     name: "Inscription",
-    //     component: FormulaireInscription
-    // },
-
+    // DASHBOARD
     // =========================
-    // DASHBOARD ADMIN
-    // =========================
-   {
-    path: "/dashboard",
-    component: DashboardLayout,
-    meta: {
-        requiresAuth: true
-    },
-    children: [
-
-        {
-            path: "",
-            name: "dashboard",
-            component: Dashboard
+    {
+        path: "/dashboard",
+        component: DashboardLayout,
+        meta: {
+            requiresAuth: true
         },
 
-        {
-            path: "profil",
-            name: "profil",
-            component: Profil
-        },
+        children: [
 
-        {
-            path: "apprenants",
-            name: "apprenants",
-            component: Apprenants
-        },
+            {
+                path: "",
+                name: "dashboard",
+                component: Dashboard
+            },
 
-        {
-            path: "diplomes",
-            name: "diplomes",
-            component: Diplomes
-        },
+            {
+                path: "profil",
+                name: "profil",
+                component: Profil
+            },
 
-        {
-            path: "boite-idees",
-            name: "boite-idees",
-            component: BoiteIdees
-        },
+            // ================= APPRENANTS =================
 
-        {
-            path: "users",
-            name: "users",
-            component: Users
-        },
+            {
+                path: "apprenants",
+                name: "liste-apprenants",
+                component: () =>
+                    import("../views/dashboard/apprenants/ListeApprenants.vue")
+            },
 
-        {
-            path: "statistiques",
-            name: "statistiques",
-            component: Statistiques
-        }
+            {
+                path: "apprenants/ajouter",
+                name: "ajouter-apprenant",
+                component: () =>
+                    import("../views/dashboard/apprenants/AjouterApprenant.vue")
+            },
 
-    ]
+            {
+                path: "apprenants/:id",
+                name: "detail-apprenant",
+                component: () =>
+                    import("../views/dashboard/apprenants/DetailApprenant.vue")
+            },
+
+            {
+                path: "apprenants/:id/modifier",
+                name: "modifier-apprenant",
+                component: () =>
+                    import("../views/dashboard/apprenants/ModifierApprenant.vue")
+            },
+
+           // ================= FORMATIONS =================
+
+
+{
+    path: "formations",
+    name: "liste-formations",
+    component: () =>
+        import("../views/dashboard/formations/ListeFormations.vue")
 },
 
+
+{
+    path: "formations/ajouter",
+    name: "ajouter-formation",
+    component: () =>
+        import("../views/dashboard/formations/AjouterFormation.vue")
+},
+
+
+{
+    path: "formations/:id",
+    name: "detail-formation",
+    component: () =>
+        import("../views/dashboard/formations/DetailFormation.vue")
+},
+
+
+{
+    path: "formations/:id/modifier",
+    name: "modifier-formation",
+    component: () =>
+        import("../views/dashboard/formations/ModifierFormation.vue")
+},
+
+
+
+
+
+
+// ================= INSCRIPTIONS =================
+
+
+{
+    path: "inscriptions",
+    name: "liste-inscriptions",
+    component: () =>
+        import("../views/dashboard/inscriptions/ListeInscriptions.vue")
+},
+
+
+{
+    path: "inscriptions/ajouter",
+    name: "ajouter-inscription",
+    component: () =>
+        import("../views/dashboard/inscriptions/AjouterInscription.vue")
+},
+
+
+{
+    path: "inscriptions/:id",
+    name: "detail-inscription",
+    component: () =>
+        import("../views/dashboard/inscriptions/DetailInscription.vue")
+},
+
+
+{
+    path: "inscriptions/:id/modifier",
+    name: "modifier-inscription",
+    component: () =>
+        import("../views/dashboard/inscriptions/ModifierInscription.vue")
+},
+
+
+
+
+// ================= STATISTIQUES =================
+
+{
+    path: "statistiques",
+    name: "statistiques",
+    component: Statistiques
+}
+
+            /*
+            ====================================================
+            CES ROUTES SERONT DÉCOMMENTÉES PLUS TARD
+            QUAND LES DOSSIERS SERONT CRÉÉS
+            ====================================================
+
+            // ================= DIPLOMES =================
+
+            {
+                path: "diplomes",
+                component: () => import("../views/dashboard/diplomes/ListeDiplomes.vue")
+            },
+
+            {
+                path: "diplomes/ajouter",
+                component: () => import("../views/dashboard/diplomes/AjouterDiplome.vue")
+            },
+
+            {
+                path: "diplomes/:id",
+                component: () => import("../views/dashboard/diplomes/DetailDiplome.vue")
+            },
+
+            {
+                path: "diplomes/:id/modifier",
+                component: () => import("../views/dashboard/diplomes/ModifierDiplome.vue")
+            },
+
+            // ================= BOITE IDEES =================
+
+            {
+                path: "boite-idees",
+                component: () => import("../views/dashboard/boite-idees/ListeBoiteIdees.vue")
+            },
+
+            {
+                path: "boite-idees/ajouter",
+                component: () => import("../views/dashboard/boite-idees/AjouterBoiteIdee.vue")
+            },
+
+            {
+                path: "boite-idees/:id",
+                component: () => import("../views/dashboard/boite-idees/DetailBoiteIdee.vue")
+            },
+
+            {
+                path: "boite-idees/:id/modifier",
+                component: () => import("../views/dashboard/boite-idees/ModifierBoiteIdee.vue")
+            },
+
+            // ================= USERS =================
+
+            {
+                path: "users",
+                component: () => import("../views/dashboard/users/ListeUsers.vue")
+            },
+
+            {
+                path: "users/ajouter",
+                component: () => import("../views/dashboard/users/AjouterUser.vue")
+            },
+
+            {
+                path: "users/:id",
+                component: () => import("../views/dashboard/users/DetailUser.vue")
+            },
+
+            {
+                path: "users/:id/modifier",
+                component: () => import("../views/dashboard/users/ModifierUser.vue")
+            }
+
+            */
+
+        ]
+    },
 
     // =========================
     // PAGE 404
@@ -193,8 +353,6 @@ const routes = [
 
 ];
 
-
-
 const router = createRouter({
 
     history: createWebHistory(),
@@ -202,31 +360,46 @@ const router = createRouter({
     routes,
 
     scrollBehavior() {
+
         return {
             top: 0
         };
+
     }
 
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
 
     const auth = useAuthStore();
 
-    // Vérifie si la route nécessite une authentification
-    if (to.matched.some(record => record.meta.requiresAuth) && !auth.isAuthenticated) {
-        return next("/login");
+
+    if(
+        to.matched.some(record => record.meta.requiresAuth)
+        &&
+        !auth.isAuthenticated
+    ){
+
+        return "/login";
+
     }
 
-    // Empêcher un utilisateur connecté d'aller sur login/register
-    if (
-        (to.name === "login" || to.name === "register") &&
+
+
+    if(
+        (to.name === "login" || to.name === "register")
+        &&
         auth.isAuthenticated
-    ) {
-        return next("/dashboard");
+    ){
+
+        return "/dashboard";
+
     }
 
-    next();
+
+
+    return true;
+
 
 });
 export default router;
