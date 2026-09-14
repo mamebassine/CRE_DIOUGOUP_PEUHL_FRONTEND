@@ -236,6 +236,7 @@
                         @change="handlePhoto"
                     >
 
+
                     <!-- APERÇU PHOTO -->
 
                     <img
@@ -250,14 +251,16 @@
             </div>
 
 
-            <!-- ================= MODULE / HORAIRE ================= -->
+            <!-- ================= FORMATION / HORAIRE ================= -->
 
             <div class="row">
+
+                <!-- ================= FORMATION DYNAMIQUE ================= -->
 
                 <div class="col-md-6 mb-3">
 
                     <label>
-                        Module choisi
+                        Formation choisie
                     </label>
 
                     <select
@@ -266,29 +269,45 @@
                     >
 
                         <option value="">
-                            Choisir un module
+                            Choisir une formation
                         </option>
 
-                        <option value="Bureautique">
-                            Bureautique
+
+                        <!-- CHARGEMENT -->
+
+                        <option
+                            v-if="loadingFormations"
+                            disabled
+                            value=""
+                        >
+                            Chargement des formations...
                         </option>
 
-                        <option value="Développement Web">
-                            Développement Web
-                        </option>
 
-                        <option value="Infographie">
-                            Infographie
-                        </option>
+                        <!-- FORMATIONS -->
 
-                        <option value="Réseaux">
-                            Réseaux
+                        <option
+                            v-for="formation in formationsActives"
+                            :key="formation.id"
+                            :value="formation.nom"
+                        >
+                            {{ formation.nom }}
                         </option>
 
                     </select>
 
+
+                    <small
+                        v-if="!loadingFormations && formationsActives.length === 0"
+                        class="horaire-info"
+                    >
+                        Aucune formation active disponible.
+                    </small>
+
                 </div>
 
+
+                <!-- ================= HORAIRE ================= -->
 
                 <div class="col-md-6 mb-3">
 
@@ -334,6 +353,7 @@
                 v-if="mode === 'admin'"
                 class="admin-box"
             >
+
 
                 <!-- ================= STATUT ================= -->
 
@@ -456,8 +476,13 @@ import {
     reactive,
     ref,
     computed,
-    watch
+    watch,
+    onMounted
 } from "vue";
+
+import {
+    getFormations
+} from "../../services/formationService";
 
 
 /* =====================================================
@@ -494,6 +519,89 @@ const emit = defineEmits([
 
 
 /* =====================================================
+   FORMATIONS
+===================================================== */
+
+const formations = ref([]);
+
+const loadingFormations = ref(false);
+
+
+/* =====================================================
+   CHARGER LES FORMATIONS
+===================================================== */
+
+const chargerFormations = async () => {
+
+    loadingFormations.value = true;
+
+    try {
+
+        const response =
+            await getFormations();
+
+        console.log(
+            "Formations récupérées :",
+            response.data
+        );
+
+
+        /*
+         * Ton API utilise probablement
+         * une pagination Laravel.
+         *
+         * Les formations sont donc dans :
+         *
+         * response.data.data
+         */
+
+        formations.value =
+            response.data.data ?? [];
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Erreur lors du chargement des formations :",
+            error
+        );
+
+        formations.value = [];
+
+    }
+
+    finally {
+
+        loadingFormations.value = false;
+
+    }
+
+};
+
+
+/* =====================================================
+   FORMATIONS ACTIVES UNIQUEMENT
+===================================================== */
+
+const formationsActives = computed(() => {
+
+    return formations.value.filter(
+
+        formation =>
+
+            formation.is_active === true ||
+
+            formation.is_active === 1 ||
+
+            formation.is_active === "1"
+
+    );
+
+});
+
+
+/* =====================================================
    FORMULAIRE
 ===================================================== */
 
@@ -501,15 +609,25 @@ const form = reactive({
 
     ...props.apprenant,
 
-    nom: props.apprenant.user?.nom || "",
+    nom:
+        props.apprenant.user?.nom || "",
 
-    prenom: props.apprenant.user?.prenom || "",
+    prenom:
+        props.apprenant.user?.prenom || "",
 
-    email: props.apprenant.user?.email || "",
+    email:
+        props.apprenant.user?.email || "",
 
     statut:
         props.apprenant.statut ||
         "En attente",
+
+    date_naissance:
+        props.apprenant.date_naissance
+            ? String(
+                props.apprenant.date_naissance
+            ).split("T")[0]
+            : "",
 
     photo: null
 
@@ -521,48 +639,86 @@ const form = reactive({
 ===================================================== */
 
 watch(
+
     () => props.apprenant,
 
     (nouveau) => {
 
         if (!nouveau) {
+
             return;
+
         }
 
+
         Object.assign(
+
             form,
+
             {
 
                 ...nouveau,
+
 
                 nom:
                     nouveau.user?.nom ||
                     "",
 
+
                 prenom:
                     nouveau.user?.prenom ||
                     "",
+
 
                 email:
                     nouveau.user?.email ||
                     "",
 
+
                 statut:
                     nouveau.statut ||
                     "En attente",
 
-                photo:
-                    null
+
+                /*
+                 * CORRECTION DATE
+                 *
+                 * Laravel envoie parfois :
+                 *
+                 * 1992-12-18T00:00:00.000000Z
+                 *
+                 * Mais input type="date"
+                 * accepte uniquement :
+                 *
+                 * 1992-12-18
+                 */
+
+                date_naissance:
+                    nouveau.date_naissance
+
+                        ? String(
+                            nouveau.date_naissance
+                        ).split("T")[0]
+
+                        : "",
+
+
+                photo: null
 
             }
+
         );
 
     },
 
     {
+
         deep: true,
+
         immediate: true
+
     }
+
 );
 
 
@@ -593,40 +749,66 @@ const dateMax = computed(() => {
 const age = computed(() => {
 
     if (!form.date_naissance) {
+
         return null;
+
     }
+
 
     const naissance =
         new Date(
             form.date_naissance
         );
 
+
     const aujourd =
         new Date();
 
+
     let resultat =
+
         aujourd.getFullYear()
+
         -
+
         naissance.getFullYear();
 
+
     const mois =
+
         aujourd.getMonth()
+
         -
+
         naissance.getMonth();
 
+
     if (
-        mois < 0 ||
+
+        mois < 0
+
+        ||
+
         (
-            mois === 0 &&
+
+            mois === 0
+
+            &&
+
             aujourd.getDate()
+
             <
+
             naissance.getDate()
+
         )
+
     ) {
 
         resultat--;
 
     }
+
 
     return resultat;
 
@@ -644,16 +826,24 @@ const previewPhoto =
 const handlePhoto = (event) => {
 
     const file =
-        event.target.files[0];
+        event.target.files?.[0];
+
 
     if (!file) {
+
         return;
+
     }
 
-    form.photo = file;
+
+    form.photo =
+        file;
+
 
     previewPhoto.value =
-        URL.createObjectURL(file);
+        URL.createObjectURL(
+            file
+        );
 
 };
 
@@ -664,11 +854,17 @@ const handlePhoto = (event) => {
 
 const submitForm = () => {
 
+
     /* Vérification de l'âge */
 
     if (
-        age.value !== null &&
+
+        age.value !== null
+
+        &&
+
         age.value < 11
+
     ) {
 
         alert(
@@ -680,14 +876,30 @@ const submitForm = () => {
     }
 
 
-    /* Envoi au parent */
+    /*
+     * Envoi au parent
+     */
 
     emit(
+
         "submit",
+
         form
+
     );
 
 };
+
+
+/* =====================================================
+   AU CHARGEMENT
+===================================================== */
+
+onMounted(() => {
+
+    chargerFormations();
+
+});
 
 </script>
 
@@ -947,6 +1159,7 @@ label {
         flex-direction: column;
 
     }
+
 
     .col-md-6 {
 

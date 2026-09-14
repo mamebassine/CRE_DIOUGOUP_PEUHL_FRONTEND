@@ -1,59 +1,117 @@
 import api from "../api/api";
 
-// ===============================
+// =====================================================
 // LISTE DES INSCRIPTIONS
-// ===============================
+// =====================================================
 
 export function getInscriptions() {
     return api.get("/auth/inscriptions");
 }
 
-// ===============================
-// DETAIL
-// ===============================
+
+// =====================================================
+// DETAIL D'UNE INSCRIPTION
+// =====================================================
 
 export function getInscription(id) {
     return api.get(`/auth/inscriptions/${id}`);
 }
 
-// ===============================
+
+// =====================================================
 // INSCRIPTION PUBLIQUE
-// ===============================
 // Utilisée par le visiteur depuis le site
+// =====================================================
 
 export function inscriptionPublique(data) {
-    return api.post("/auth/inscription-formation", data);
+    return api.post(
+        "/auth/inscription-formation",
+        data
+    );
 }
 
-// ===============================
+
+// =====================================================
 // INSCRIPTION APPRENANT CONNECTÉ
-// ===============================
+// =====================================================
 
 export function createInscription(data) {
-    return api.post("/auth/inscriptions", data);
+    return api.post(
+        "/auth/inscriptions",
+        data
+    );
 }
 
-// ===============================
+
+// =====================================================
 // INSCRIPTION PAR ADMIN
-// ===============================
+// =====================================================
 
 export function inscriptionAdmin(data) {
-    return api.post("/auth/inscriptions/admin", data);
+    return api.post(
+        "/auth/inscriptions/admin",
+        data
+    );
 }
 
-// ===============================
-// VALIDATION
-// ===============================
+
+// =====================================================
+// INSCRIPTION COMPLETE ADMIN / GESTIONNAIRE
+// Création du compte + apprenant + inscription
+// Avec support de la photo
+// =====================================================
+
+export function inscriptionCompleteAdmin(data) {
+
+    const formData = new FormData();
+
+    Object.keys(data).forEach(key => {
+
+        if (
+            data[key] !== null &&
+            data[key] !== undefined
+        ) {
+
+            formData.append(
+                key,
+                data[key]
+            );
+        }
+
+    });
+
+
+    return api.post(
+        "/auth/inscriptions/complete",
+        formData,
+        {
+            headers: {
+                "Content-Type":
+                    "multipart/form-data"
+            }
+        }
+    );
+}
+
+
+// =====================================================
+// VALIDATION / MODIFICATION INSCRIPTION
+// =====================================================
 
 export function updateInscription(id, data) {
-    return api.put(`/auth/inscriptions/${id}`, data);
+    return api.put(
+        `/auth/inscriptions/${id}`,
+        data
+    );
 }
 
-// ===============================
-// SUPPRESSION
-// ===============================
+
+// =====================================================
+// SUPPRESSION INSCRIPTION
+// =====================================================
 
 export function deleteInscription(id) {
-    return api.delete(`/auth/inscriptions/${id}`);
+    return api.delete(
+        `/auth/inscriptions/${id}`
+    );
 }
-

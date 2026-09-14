@@ -3,7 +3,8 @@
 import { onMounted } from "vue";
 
 import {
-    useRoute
+    useRoute,
+    useRouter
 } from "vue-router";
 
 import {
@@ -11,8 +12,9 @@ import {
 } from "../../../stores/formation";
 
 
-const route =
-    useRoute();
+const route = useRoute();
+
+const router = useRouter();
 
 const store =
     useFormationStore();
@@ -32,7 +34,18 @@ onMounted(() => {
 
 
 // =====================================================
-// VÉRIFIER UNE URL
+// RETOUR
+// =====================================================
+
+function retour() {
+
+    router.back();
+
+}
+
+
+// =====================================================
+// VÉRIFIER URL
 // =====================================================
 
 function isUrl(value) {
@@ -61,7 +74,7 @@ function isUrl(value) {
 
 
 // =====================================================
-// URL DE L'IMAGE
+// URL IMAGE
 // =====================================================
 
 function getImageUrl(icone) {
@@ -72,22 +85,11 @@ function getImageUrl(icone) {
 
     }
 
-
-    /*
-     * Image provenant d'Internet
-     */
-
     if (isUrl(icone)) {
 
         return icone;
 
     }
-
-
-    /*
-     * Image locale enregistrée
-     * par Laravel
-     */
 
     return `http://127.0.0.1:8000/storage/${icone}`;
 
@@ -105,294 +107,602 @@ function imageError(event) {
 
 }
 
+
+// =====================================================
+// CLASSE STATUT
+// =====================================================
+
+function getStatutClass(active) {
+
+    return active
+        ? "statut-active"
+        : "statut-inactive";
+
+}
+
 </script>
 
 
 <template>
+
+<div class="page">
+
+
+    <!-- ================================================= -->
+    <!-- CHARGEMENT -->
+    <!-- ================================================= -->
 
     <div
         v-if="store.loading"
         class="loading"
     >
 
-        Chargement...
+        <div class="loader"></div>
+
+        <p>
+            Chargement de la formation...
+        </p>
 
     </div>
 
 
+    <!-- ================================================= -->
+    <!-- FORMATION -->
+    <!-- ================================================= -->
+
     <div
         v-else-if="store.formation"
-        class="formation-detail"
+        class="detail-card"
     >
 
 
         <!-- ================================================= -->
-        <!-- IMAGE -->
+        <!-- HEADER FORMATION -->
         <!-- ================================================= -->
 
-        <div class="formation-image-container">
-
-            <img
-                v-if="
-                    store.formation.icone
-                "
-                :src="
-                    getImageUrl(
-                        store.formation.icone
-                    )
-                "
-                :alt="
-                    store.formation.nom
-                "
-                class="formation-image"
-                @error="imageError"
-            >
+        <div class="formation-header">
 
 
-            <div
-                v-else
-                class="no-image"
-            >
+            <!-- IMAGE -->
 
-                Aucune image disponible
+            <div class="photo-section">
 
-            </div>
-
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- NOM -->
-        <!-- ================================================= -->
-
-        <h2>
-
-            {{ store.formation.nom }}
-
-        </h2>
-
-
-        <!-- ================================================= -->
-        <!-- DESCRIPTION -->
-        <!-- ================================================= -->
-
-        <p>
-
-            {{ store.formation.description }}
-
-        </p>
-
-
-        <!-- ================================================= -->
-        <!-- INFORMATIONS -->
-        <!-- ================================================= -->
-
-        <div class="formation-informations">
-
-
-            <div class="information">
-
-                <strong>
-                    Durée :
-                </strong>
-
-                <span>
-                    {{ store.formation.duree }}
-                </span>
-
-            </div>
-
-
-            <div class="information">
-
-                <strong>
-                    Diplôme :
-                </strong>
-
-                <span>
-                    {{ store.formation.diplome }}
-                </span>
-
-            </div>
-
-
-            <div class="information">
-
-                <strong>
-                    Lieu :
-                </strong>
-
-                <span>
-                    {{ store.formation.lieu }}
-                </span>
-
-            </div>
-
-
-            <div
-                v-if="
-                    store.formation.capacite
-                "
-                class="information"
-            >
-
-                <strong>
-                    Capacité :
-                </strong>
-
-                <span>
-                    {{ store.formation.capacite }}
-                    apprenants
-                </span>
-
-            </div>
-
-
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- RÉSUMÉ -->
-        <!-- ================================================= -->
-
-        <div
-            v-if="
-                store.formation.resume
-            "
-            class="section"
-        >
-
-            <h3>
-                Résumé
-            </h3>
-
-            <p>
-
-                {{ store.formation.resume }}
-
-            </p>
-
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- OBJECTIFS -->
-        <!-- ================================================= -->
-
-        <div
-            v-if="
-                store.formation.objectifs &&
-                store.formation.objectifs.length
-            "
-            class="section"
-        >
-
-            <h3>
-                Objectifs de la formation
-            </h3>
-
-
-            <ul>
-
-                <li
-                    v-for="
-                        (objectif, index)
-                        in store.formation.objectifs
+                <img
+                    v-if="store.formation.icone"
+                    :src="
+                        getImageUrl(
+                            store.formation.icone
+                        )
                     "
-                    :key="index"
+                    :alt="store.formation.nom"
+                    class="formation-photo"
+                    @error="imageError"
                 >
 
-                    {{ objectif }}
+                <div
+                    v-else
+                    class="formation-photo no-image"
+                >
 
-                </li>
+                    <i class="fas fa-graduation-cap"></i>
 
-            </ul>
+                </div>
+
+            </div>
+
+
+            <!-- INFORMATIONS -->
+
+            <div class="formation-header-info">
+
+                <h2>
+
+                    {{ store.formation.nom || "Formation" }}
+
+                </h2>
+
+
+                <p>
+
+                    Formation professionnelle
+
+                </p>
+
+
+                <span
+                    :class="[
+                        'status',
+                        getStatutClass(
+                            store.formation.is_active
+                        )
+                    ]"
+                >
+
+                    <span class="status-dot"></span>
+
+                    {{
+                        store.formation.is_active
+                            ? "Formation active"
+                            : "Formation inactive"
+                    }}
+
+                </span>
+
+            </div>
 
         </div>
 
 
         <!-- ================================================= -->
-        <!-- STATUT -->
+        <!-- CONTENU -->
         <!-- ================================================= -->
 
-        <div class="status">
+        <div class="content">
 
-            <span
-                :class="
-                    store.formation.is_active
-                        ? 'active'
-                        : 'inactive'
-                "
+
+            <!-- ================================================= -->
+            <!-- BOUTON RETOUR -->
+            <!-- ================================================= -->
+
+            <div class="top-action">
+
+                <button
+                    class="btn-retour"
+                    type="button"
+                    @click="retour"
+                >
+
+                    <i class="fas fa-arrow-left"></i>
+
+                    Retour
+
+                </button>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- DESCRIPTION -->
+            <!-- ================================================= -->
+
+            <div class="section">
+
+                <h3>
+
+                    <i class="fas fa-align-left"></i>
+
+                    Description
+
+                </h3>
+
+
+                <div class="description-card">
+
+                    <p>
+
+                        {{
+                            store.formation.description
+                            || "Aucune description disponible."
+                        }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- INFORMATIONS FORMATION -->
+            <!-- ================================================= -->
+
+            <div class="section">
+
+                <h3>
+
+                    <i class="fas fa-info-circle"></i>
+
+                    Informations de la formation
+
+                </h3>
+
+
+                <div class="grid">
+
+
+                    <!-- DURÉE -->
+
+                    <div class="info-card">
+
+                        <label>
+
+                            <i class="fas fa-clock"></i>
+
+                            Durée
+
+                        </label>
+
+                        <span>
+
+                            {{ store.formation.duree || "-" }}
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- DIPLÔME -->
+
+                    <div class="info-card">
+
+                        <label>
+
+                            <i class="fas fa-certificate"></i>
+
+                            Diplôme
+
+                        </label>
+
+                        <span>
+
+                            {{ store.formation.diplome || "-" }}
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- LIEU -->
+
+                    <div class="info-card">
+
+                        <label>
+
+                            <i class="fas fa-map-marker-alt"></i>
+
+                            Lieu
+
+                        </label>
+
+                        <span>
+
+                            {{ store.formation.lieu || "-" }}
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- CAPACITÉ -->
+
+                    <div class="info-card">
+
+                        <label>
+
+                            <i class="fas fa-users"></i>
+
+                            Capacité
+
+                        </label>
+
+                        <span>
+
+                            {{
+                                store.formation.capacite
+                                    ? store.formation.capacite + " apprenants"
+                                    : "Illimitée"
+                            }}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- RÉSUMÉ -->
+            <!-- ================================================= -->
+
+            <div
+                v-if="store.formation.resume"
+                class="section"
             >
 
-                {{
-                    store.formation.is_active
-                        ? 'Formation active'
-                        : 'Formation inactive'
-                }}
+                <h3>
 
-            </span>
+                    <i class="fas fa-file-alt"></i>
+
+                    Résumé
+
+                </h3>
+
+
+                <div class="text-card">
+
+                    <p>
+
+                        {{ store.formation.resume }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- OBJECTIFS -->
+            <!-- ================================================= -->
+
+            <div
+                v-if="
+                    store.formation.objectifs &&
+                    store.formation.objectifs.length
+                "
+                class="section"
+            >
+
+                <h3>
+
+                    <i class="fas fa-bullseye"></i>
+
+                    Objectifs de la formation
+
+                </h3>
+
+
+                <div class="objectifs-card">
+
+                    <div
+                        v-for="
+                            (objectif, index)
+                            in store.formation.objectifs
+                        "
+                        :key="index"
+                        class="objectif"
+                    >
+
+                        <span class="objectif-icon">
+
+                            <i class="fas fa-check"></i>
+
+                        </span>
+
+
+                        <span>
+
+                            {{ objectif }}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- STATUT -->
+            <!-- ================================================= -->
+
+            <div class="section">
+
+                <h3>
+
+                    <i class="fas fa-toggle-on"></i>
+
+                    Statut
+
+                </h3>
+
+
+                <div class="status-card">
+
+                    <span
+                        :class="[
+                            'badge',
+                            getStatutClass(
+                                store.formation.is_active
+                            )
+                        ]"
+                    >
+
+                        <span class="status-dot"></span>
+
+                        {{
+                            store.formation.is_active
+                                ? "Active"
+                                : "Inactive"
+                        }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- BOUTON RETOUR BAS -->
+            <!-- ================================================= -->
+
+            <div class="actions">
+
+                <button
+                    class="btn-retour"
+                    type="button"
+                    @click="retour"
+                >
+
+                    <i class="fas fa-arrow-left"></i>
+
+                    Retour aux formations
+
+                </button>
+
+            </div>
+
 
         </div>
-
 
     </div>
 
 
-    <!-- ===================================================== -->
+    <!-- ================================================= -->
     <!-- FORMATION INTROUVABLE -->
-    <!-- ===================================================== -->
+    <!-- ================================================= -->
 
     <div
         v-else
         class="not-found"
     >
 
-        Formation introuvable.
+        <div class="not-found-icon">
+
+            <i class="fas fa-graduation-cap"></i>
+
+        </div>
+
+
+        <h3>
+
+            Formation introuvable
+
+        </h3>
+
+
+        <p>
+
+            La formation demandée n'existe pas ou
+            n'est plus disponible.
+
+        </p>
+
+
+        <button
+            class="btn-retour"
+            type="button"
+            @click="retour"
+        >
+
+            <i class="fas fa-arrow-left"></i>
+
+            Retour
+
+        </button>
 
     </div>
+
+</div>
 
 </template>
 
 
 <style scoped>
 
-.formation-detail {
+/* ===================================================== */
+/* PAGE */
+/* ===================================================== */
 
-    width: 100%;
+.page {
 
-    max-width: 900px;
+    min-height: 100vh;
 
-    margin: 0 auto;
+    padding: 40px;
 
-    padding: 25px;
-
-    background: white;
-
-    border-radius: 12px;
+    background: #f1f5f9;
 
     box-sizing: border-box;
 
 }
 
 
-.formation-image-container {
+/* ===================================================== */
+/* CARD PRINCIPALE */
+/* ===================================================== */
+
+.detail-card {
 
     width: 100%;
 
-    max-width: 300px;
+    max-width: 1000px;
 
-    height: 220px;
+    margin: 0 auto;
 
-    margin: 0 auto 25px;
+    background: #ffffff;
 
-    border-radius: 12px;
+    border-radius: 25px;
 
     overflow: hidden;
 
-    background: #f5f5f5;
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, .08);
 
-    border: 1px solid #ddd;
+}
+
+
+/* ===================================================== */
+/* HEADER */
+/* ===================================================== */
+
+.formation-header {
+
+    background:
+        linear-gradient(
+            135deg,
+            #3B5998,
+            #2E7D32
+        );
+
+    padding: 35px;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 30px;
+
+}
+
+
+/* ===================================================== */
+/* IMAGE */
+/* ===================================================== */
+
+.photo-section {
+
+    flex-shrink: 0;
+
+}
+
+
+.formation-photo {
+
+    width: 150px;
+
+    height: 150px;
+
+    border-radius: 20px;
+
+    object-fit: cover;
+
+    border: 6px solid white;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, .25);
+
+}
+
+
+.no-image {
 
     display: flex;
 
@@ -400,193 +710,769 @@ function imageError(event) {
 
     justify-content: center;
 
-}
+    color: #3B5998;
 
+    background: #eef2ff;
 
-.formation-image {
-
-    width: 100%;
-
-    height: 100%;
-
-    object-fit: cover;
+    font-size: 45px;
 
 }
 
 
-.no-image {
+/* ===================================================== */
+/* INFORMATIONS HEADER */
+/* ===================================================== */
 
-    color: #777;
+.formation-header-info {
 
-    text-align: center;
+    flex: 1;
+
+}
+
+
+.formation-header-info h2 {
+
+    margin: 0 0 8px;
+
+    font-size: 30px;
+
+    font-weight: 800;
+
+}
+
+
+.formation-header-info p {
+
+    margin: 0;
+
+    color: rgba(255, 255, 255, .85);
+
+    font-size: 15px;
+
+}
+
+
+/* ===================================================== */
+/* STATUT HEADER */
+/* ===================================================== */
+
+.status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 18px;
+
+    padding: 8px 18px;
+
+    border-radius: 30px;
+
+    background: white;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+}
+
+
+.status-dot {
+
+    width: 8px;
+
+    height: 8px;
+
+    border-radius: 50%;
+
+    display: inline-block;
+
+}
+
+
+.status.statut-active {
+
+    color: #15803d;
+
+}
+
+
+.status.statut-active .status-dot {
+
+    background: #22c55e;
+
+}
+
+
+.status.statut-inactive {
+
+    color: #dc2626;
+
+}
+
+
+.status.statut-inactive .status-dot {
+
+    background: #ef4444;
+
+}
+
+
+/* ===================================================== */
+/* CONTENU */
+/* ===================================================== */
+
+.content {
+
+    padding: 35px;
+
+}
+
+
+/* ===================================================== */
+/* ACTION HAUT */
+/* ===================================================== */
+
+.top-action {
+
+    margin-bottom: 30px;
+
+}
+
+
+/* ===================================================== */
+/* BOUTON RETOUR */
+/* ===================================================== */
+
+.btn-retour {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    padding: 12px 22px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #3B5998;
+
+    color: #ffffff;
 
     font-size: 14px;
 
-}
+    font-weight: 700;
 
+    cursor: pointer;
 
-.formation-detail h2 {
-
-    margin-bottom: 15px;
-
-    font-size: 28px;
+    transition: .3s ease;
 
 }
 
 
-.formation-detail p {
+.btn-retour:hover {
 
-    line-height: 1.7;
+    background: #2E7D32;
 
-    color: #555;
+    transform: translateX(-3px);
 
-}
-
-
-.formation-informations {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 15px;
-
-    margin-top: 25px;
+    box-shadow:
+        0 8px 20px rgba(59, 89, 152, .25);
 
 }
 
 
-.information {
-
-    padding: 15px;
-
-    background: #f8f9fa;
-
-    border-radius: 8px;
-
-}
-
-
-.information strong {
-
-    display: block;
-
-    margin-bottom: 5px;
-
-}
-
+/* ===================================================== */
+/* SECTION */
+/* ===================================================== */
 
 .section {
 
-    margin-top: 30px;
+    margin-bottom: 40px;
 
 }
 
 
 .section h3 {
 
-    margin-bottom: 12px;
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin: 0 0 20px;
+
+    color: #3B5998;
+
+    font-size: 20px;
+
+    font-weight: 800;
 
 }
 
 
-.section ul {
+.section h3 i {
 
-    padding-left: 20px;
-
-}
-
-
-.section li {
-
-    margin-bottom: 8px;
+    font-size: 18px;
 
 }
 
 
-.status {
+/* ===================================================== */
+/* DESCRIPTION */
+/* ===================================================== */
 
-    margin-top: 30px;
+.description-card {
+
+    padding: 20px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 15px;
 
 }
 
 
-.active,
-.inactive {
+.description-card p {
 
-    display: inline-block;
+    margin: 0;
 
-    padding: 8px 14px;
+    color: #475569;
 
-    border-radius: 20px;
+    line-height: 1.8;
+
+    font-size: 14px;
+
+}
+
+
+/* ===================================================== */
+/* GRID */
+/* ===================================================== */
+
+.grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 20px;
+
+}
+
+
+/* ===================================================== */
+/* INFO CARD */
+/* ===================================================== */
+
+.info-card {
+
+    background: #f8fafc;
+
+    padding: 18px;
+
+    border-radius: 15px;
+
+    border: 1px solid #e2e8f0;
+
+    transition: .3s ease;
+
+}
+
+
+.info-card:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, .07);
+
+}
+
+
+.info-card label {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #64748b;
 
     font-size: 13px;
 
-    font-weight: 600;
+    margin-bottom: 9px;
 
 }
 
 
-.active {
+.info-card label i {
 
-    background: #e8f5e9;
-
-    color: #2e7d32;
+    color: #3B5998;
 
 }
 
 
-.inactive {
+.info-card span {
 
-    background: #ffebee;
+    color: #1e293b;
 
-    color: #c62828;
+    font-size: 15px;
+
+    font-weight: 700;
+
+    word-break: break-word;
 
 }
 
+
+/* ===================================================== */
+/* CARTE TEXTE */
+/* ===================================================== */
+
+.text-card {
+
+    padding: 20px;
+
+    background: #f8fafc;
+
+    border-radius: 15px;
+
+    border: 1px solid #e2e8f0;
+
+}
+
+
+.text-card p {
+
+    margin: 0;
+
+    color: #475569;
+
+    line-height: 1.8;
+
+    font-size: 14px;
+
+}
+
+
+/* ===================================================== */
+/* OBJECTIFS */
+/* ===================================================== */
+
+.objectifs-card {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+}
+
+
+.objectif {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 15px 18px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 14px;
+
+    color: #334155;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+}
+
+
+.objectif-icon {
+
+    width: 30px;
+
+    height: 30px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #dcfce7;
+
+    color: #15803d;
+
+    font-size: 12px;
+
+}
+
+
+/* ===================================================== */
+/* STATUT */
+/* ===================================================== */
+
+.status-card {
+
+    padding: 18px;
+
+    background: #f8fafc;
+
+    border-radius: 15px;
+
+    border: 1px solid #e2e8f0;
+
+}
+
+
+/* ===================================================== */
+/* BADGE */
+/* ===================================================== */
+
+.badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 9px 16px;
+
+    border-radius: 30px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+}
+
+
+.badge.statut-active {
+
+    background: #dcfce7;
+
+    color: #15803d;
+
+}
+
+
+.badge.statut-active .status-dot {
+
+    background: #22c55e;
+
+}
+
+
+.badge.statut-inactive {
+
+    background: #fee2e2;
+
+    color: #dc2626;
+
+}
+
+
+.badge.statut-inactive .status-dot {
+
+    background: #ef4444;
+
+}
+
+
+/* ===================================================== */
+/* ACTIONS BAS */
+/* ===================================================== */
+
+.actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin-top: 10px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid #e2e8f0;
+
+}
+
+
+/* ===================================================== */
+/* CHARGEMENT */
+/* ===================================================== */
 
 .loading {
 
-    padding: 40px;
+    min-height: 400px;
 
-    text-align: center;
+    display: flex;
 
-    color: #666;
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #3B5998;
 
 }
 
+
+.loader {
+
+    width: 45px;
+
+    height: 45px;
+
+    border-radius: 50%;
+
+    border: 4px solid #e2e8f0;
+
+    border-top-color: #3B5998;
+
+    animation:
+        rotation .8s linear infinite;
+
+    margin-bottom: 15px;
+
+}
+
+
+.loading p {
+
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+}
+
+
+@keyframes rotation {
+
+    to {
+
+        transform: rotate(360deg);
+
+    }
+
+}
+
+
+/* ===================================================== */
+/* INTROUVABLE */
+/* ===================================================== */
 
 .not-found {
 
-    padding: 40px;
+    max-width: 600px;
+
+    margin: 80px auto;
+
+    padding: 50px 30px;
+
+    background: #ffffff;
+
+    border-radius: 20px;
 
     text-align: center;
 
-    color: #777;
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, .07);
 
 }
 
 
-@media (max-width: 600px) {
+.not-found-icon {
 
-    .formation-detail {
+    width: 70px;
+
+    height: 70px;
+
+    margin: 0 auto 20px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eef2ff;
+
+    color: #3B5998;
+
+    font-size: 28px;
+
+}
+
+
+.not-found h3 {
+
+    margin: 0 0 10px;
+
+    color: #1e293b;
+
+}
+
+
+.not-found p {
+
+    margin: 0 0 25px;
+
+    color: #64748b;
+
+}
+
+
+/* ===================================================== */
+/* RESPONSIVE */
+/* ===================================================== */
+
+@media (max-width: 768px) {
+
+    .page {
 
         padding: 15px;
 
     }
 
 
-    .formation-informations {
+    .formation-header {
+
+        flex-direction: column;
+
+        text-align: center;
+
+        padding: 30px 20px;
+
+    }
+
+
+    .formation-photo {
+
+        width: 125px;
+
+        height: 125px;
+
+    }
+
+
+    .formation-header-info h2 {
+
+        font-size: 24px;
+
+    }
+
+
+    .content {
+
+        padding: 20px;
+
+    }
+
+
+    .grid {
 
         grid-template-columns: 1fr;
 
     }
 
 
-    .formation-detail h2 {
+    .section h3 {
 
-        font-size: 22px;
+        font-size: 18px;
+
+    }
+
+
+    .actions {
+
+        justify-content: stretch;
+
+    }
+
+
+    .actions .btn-retour {
+
+        width: 100%;
+
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .page {
+
+        padding: 10px;
+
+    }
+
+
+    .detail-card {
+
+        border-radius: 18px;
+
+    }
+
+
+    .formation-header {
+
+        padding: 25px 15px;
+
+    }
+
+
+    .content {
+
+        padding: 18px;
+
+    }
+
+
+    .formation-photo {
+
+        width: 110px;
+
+        height: 110px;
+
+    }
+
+
+    .formation-header-info h2 {
+
+        font-size: 21px;
 
     }
 

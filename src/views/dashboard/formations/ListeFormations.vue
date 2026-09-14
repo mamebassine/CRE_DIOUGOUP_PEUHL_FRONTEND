@@ -1,159 +1,183 @@
 <script setup>
 
-import { onMounted } from "vue";
+import {
+    ref,
+    computed,
+    onMounted
+} from "vue";
 
 import {
     useFormationStore
 } from "../../../stores/formation";
 
-import { useRouter } from "vue-router";
+import {
+    useRouter
+} from "vue-router";
 
+import FormationTable
+    from "../../../components/formations/TableFormation.vue";
+
+
+/* =====================================================
+   STORE
+===================================================== */
 
 const store =
     useFormationStore();
+
+
+/* =====================================================
+   ROUTER
+===================================================== */
 
 const router =
     useRouter();
 
 
-// =====================================================
-// CHARGER LES FORMATIONS
-// =====================================================
+/* =====================================================
+   RECHERCHE
+===================================================== */
 
-onMounted(() => {
+const search =
+    ref("");
 
-    store.fetchFormations();
+
+/* =====================================================
+   FORMATIONS FILTRÉES
+===================================================== */
+
+const formationsFiltrees =
+    computed(() => {
+
+        const texte =
+            search.value
+                .trim()
+                .toLowerCase();
+
+
+        if (!texte) {
+
+            return store.formations;
+
+        }
+
+
+        return store.formations.filter(
+            formation => {
+
+                return (
+
+                    formation.nom
+                        ?.toLowerCase()
+                        .includes(texte)
+
+                    ||
+
+                    formation.duree
+                        ?.toLowerCase()
+                        .includes(texte)
+
+                    ||
+
+                    formation.diplome
+                        ?.toLowerCase()
+                        .includes(texte)
+
+                    ||
+
+                    formation.lieu
+                        ?.toLowerCase()
+                        .includes(texte)
+
+                );
+
+            }
+        );
+
+    });
+
+
+/* =====================================================
+   CHARGER LES FORMATIONS
+===================================================== */
+
+onMounted(async () => {
+
+    await store.fetchFormations();
 
 });
 
 
-// =====================================================
-// SUPPRIMER
-// =====================================================
+/* =====================================================
+   VOIR
+===================================================== */
+
+function voir(id) {
+
+    router.push(
+        `/dashboard/formations/${id}`
+    );
+
+}
+
+
+/* =====================================================
+   MODIFIER
+===================================================== */
+
+function modifier(id) {
+
+    router.push(
+        `/dashboard/formations/${id}/modifier`
+    );
+
+}
+
+
+/* =====================================================
+   SUPPRIMER
+===================================================== */
 
 async function supprimer(id) {
 
     if (
-        confirm(
+        !confirm(
             "Supprimer cette formation ?"
         )
     ) {
 
-        await store.supprimerFormation(id);
+        return;
 
     }
+
+
+    await store.supprimerFormation(id);
 
 }
 
 
-// =====================================================
-// VÉRIFIER UNE URL
-// =====================================================
+/* =====================================================
+   INSCRIRE APPRENANT
+===================================================== */
 
-function isUrl(value) {
+function inscrireApprenant(id) {
 
-    if (!value) {
-
-        return false;
-
-    }
-
-    try {
-
-        new URL(value);
-
-        return true;
-
-    }
-
-    catch {
-
-        return false;
-
-    }
+    router.push(
+        `/dashboard/formations/${id}/inscrire`
+    );
 
 }
 
 
-// =====================================================
-// URL DE L'IMAGE
-// =====================================================
+/* =====================================================
+   AJOUTER FORMATION
+===================================================== */
 
-function getImageUrl(icone) {
+function ajouterFormation() {
 
-    if (!icone) {
-
-        return null;
-
-    }
-
-
-    /*
-     * =================================================
-     * IMAGE EN LIGNE
-     * =================================================
-     *
-     * Exemple :
-     * https://site.com/image.jpg
-     */
-
-    if (isUrl(icone)) {
-
-        return icone;
-
-    }
-
-
-    /*
-     * =================================================
-     * IMAGE LOCALE
-     * =================================================
-     *
-     * Laravel enregistre par exemple :
-     *
-     * formations/abc123.jpg
-     *
-     * L'image est accessible via :
-     *
-     * http://127.0.0.1:8000/storage/formations/abc123.jpg
-     */
-
-    return `http://127.0.0.1:8000/storage/${icone}`;
-
-}
-
-
-// =====================================================
-// ERREUR IMAGE
-// =====================================================
-
-function imageError(event) {
-
-    /*
-     * Si l'image n'existe pas,
-     * on la cache.
-     */
-
-    event.target.style.display = "none";
-
-
-    /*
-     * Afficher le bloc "Image indisponible".
-     */
-
-    const parent =
-        event.target.parentElement;
-
-    if (parent) {
-
-        parent.classList.add(
-            "image-error"
-        );
-
-        parent.innerHTML =
-            "<span>Image indisponible</span>";
-
-    }
+    router.push(
+        "/dashboard/formations/ajouter"
+    );
 
 }
 
@@ -164,250 +188,74 @@ function imageError(event) {
 
     <div class="formations-page">
 
-
-        <!-- ================================================= -->
-        <!-- TITRE -->
-        <!-- ================================================= -->
+        <!-- =================================================
+             EN-TÊTE PAGE
+        ================================================== -->
 
         <div class="page-header">
 
-            <h1>
-                Liste des formations
-            </h1>
+            <div>
 
+                <h1>
+                    Liste des formations
+                </h1>
+
+                <p>
+                    Gestion des formations proposées par le centre
+                </p>
+
+            </div>
+
+
+            <!-- AJOUT -->
 
             <button
+                type="button"
                 class="btn-add"
-                @click="
-                    router.push(
-                        '/dashboard/formations/ajouter'
-                    )
-                "
+                @click="ajouterFormation"
             >
+
+                <i class="fas fa-plus"></i>
+
                 Ajouter une formation
+
             </button>
 
         </div>
 
 
-        <!-- ================================================= -->
-        <!-- CHARGEMENT -->
-        <!-- ================================================= -->
+        <!-- =================================================
+             CHARGEMENT
+        ================================================== -->
 
         <div
             v-if="store.loading"
             class="loading"
         >
 
-            Chargement...
+            <div class="loader"></div>
+
+            <p>
+                Chargement des formations...
+            </p>
 
         </div>
 
 
-        <!-- ================================================= -->
-        <!-- TABLE -->
-        <!-- ================================================= -->
+        <!-- =================================================
+             TABLEAU
+        ================================================== -->
 
-        <div
+        <FormationTable
             v-else
-            class="table-container"
-        >
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Image
-                        </th>
-
-                        <th>
-                            Nom
-                        </th>
-
-                        <th>
-                            Durée
-                        </th>
-
-                        <th>
-                            Actions
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    <tr
-                        v-for="
-                            formation in store.formations
-                        "
-                        :key="formation.id"
-                    >
-
-
-                        <!-- ================================= -->
-                        <!-- IMAGE -->
-                        <!-- ================================= -->
-
-                        <td>
-
-                            <div
-                                class="formation-image"
-                            >
-
-                                <img
-                                    v-if="
-                                        formation.icone
-                                    "
-                                    :src="
-                                        getImageUrl(
-                                            formation.icone
-                                        )
-                                    "
-                                    :alt="
-                                        formation.nom
-                                    "
-                                    @error="imageError"
-                                >
-
-
-                                <div
-                                    v-else
-                                    class="no-image"
-                                >
-
-                                    Aucune image
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <!-- ================================= -->
-                        <!-- NOM -->
-                        <!-- ================================= -->
-
-                        <td>
-
-                            {{ formation.nom }}
-
-                        </td>
-
-
-                        <!-- ================================= -->
-                        <!-- DURÉE -->
-                        <!-- ================================= -->
-
-                        <td>
-
-                            {{ formation.duree }}
-
-                        </td>
-
-
-                        <!-- ================================= -->
-                        <!-- ACTIONS -->
-                        <!-- ================================= -->
-
-                        <td>
-
-                            <div class="actions">
-
-
-                                <!-- ========================= -->
-                                <!-- VOIR -->
-                                <!-- ========================= -->
-
-                                <button
-                                    class="btn-view"
-                                    @click="
-                                        router.push(
-                                            `/dashboard/formations/${formation.id}`
-                                        )
-                                    "
-                                >
-
-                                    Voir
-
-                                </button>
-
-
-                                <!-- ========================= -->
-                                <!-- MODIFIER -->
-                                <!-- ========================= -->
-
-                                <button
-                                    class="btn-edit"
-                                    @click="
-                                        router.push(
-                                            `/dashboard/formations/${formation.id}/modifier`
-                                        )
-                                    "
-                                >
-
-                                    Modifier
-
-                                </button>
-
-
-                                <!-- ========================= -->
-                                <!-- SUPPRIMER -->
-                                <!-- ========================= -->
-
-                                <button
-                                    class="btn-delete"
-                                    @click="
-                                        supprimer(
-                                            formation.id
-                                        )
-                                    "
-                                >
-
-                                    Supprimer
-
-                                </button>
-
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    <!-- ===================================== -->
-                    <!-- AUCUNE FORMATION -->
-                    <!-- ===================================== -->
-
-                    <tr
-                        v-if="
-                            store.formations.length === 0
-                        "
-                    >
-
-                        <td
-                            colspan="4"
-                            class="empty"
-                        >
-
-                            Aucune formation disponible.
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
+            :formations="formationsFiltrees"
+            :search="search"
+            @update:search="search = $event"
+            @voir="voir"
+            @modifier="modifier"
+            @supprimer="supprimer"
+            @inscrire="inscrireApprenant"
+        />
 
     </div>
 
@@ -416,12 +264,20 @@ function imageError(event) {
 
 <style scoped>
 
+/* =========================================================
+   PAGE
+========================================================= */
+
 .formations-page {
 
     width: 100%;
 
 }
 
+
+/* =========================================================
+   HEADER
+========================================================= */
 
 .page-header {
 
@@ -431,9 +287,9 @@ function imageError(event) {
 
     align-items: center;
 
-    margin-bottom: 25px;
+    gap: 20px;
 
-    gap: 15px;
+    margin-bottom: 28px;
 
 }
 
@@ -442,24 +298,57 @@ function imageError(event) {
 
     margin: 0;
 
+    color: #1f2937;
+
+    font-size: 32px;
+
+    font-weight: 800;
+
 }
 
 
+.page-header p {
+
+    margin: 7px 0 0;
+
+    color: #64748b;
+
+    font-size: 15px;
+
+}
+
+
+/* =========================================================
+   BOUTON AJOUT
+========================================================= */
+
 .btn-add {
 
-    padding: 11px 18px;
+    display: flex;
 
-    background: #3B5998;
+    align-items: center;
 
-    color: white;
+    gap: 9px;
+
+    padding: 13px 20px;
 
     border: none;
 
-    border-radius: 8px;
+    border-radius: 10px;
+
+    background: #3B5998;
+
+    color: #ffffff;
 
     cursor: pointer;
 
-    font-weight: 600;
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition: .2s ease;
+
+    white-space: nowrap;
 
 }
 
@@ -468,190 +357,72 @@ function imageError(event) {
 
     background: #2E7D32;
 
+    transform: translateY(-2px);
+
 }
 
+
+/* =========================================================
+   LOADING
+========================================================= */
 
 .loading {
 
-    padding: 30px;
+    min-height: 300px;
 
-    text-align: center;
+    background: #ffffff;
 
-    color: #666;
-
-}
-
-
-.table-container {
-
-    width: 100%;
-
-    overflow-x: auto;
-
-}
-
-
-table {
-
-    width: 100%;
-
-    border-collapse: collapse;
-
-    background: white;
-
-}
-
-
-th,
-td {
-
-    padding: 14px;
-
-    border-bottom: 1px solid #eee;
-
-    text-align: left;
-
-    vertical-align: middle;
-
-}
-
-
-th {
-
-    background: #f8f9fa;
-
-    font-weight: 600;
-
-}
-
-
-.formation-image {
-
-    width: 65px;
-
-    height: 65px;
-
-    border-radius: 10px;
-
-    overflow: hidden;
-
-    border: 1px solid #ddd;
-
-    background: #f5f5f5;
+    border-radius: 18px;
 
     display: flex;
 
-    align-items: center;
+    flex-direction: column;
 
     justify-content: center;
 
-}
+    align-items: center;
 
-
-.formation-image img {
-
-    width: 100%;
-
-    height: 100%;
-
-    object-fit: cover;
+    color: #64748b;
 
 }
 
 
-.no-image {
+.loader {
 
-    padding: 5px;
+    width: 42px;
 
-    font-size: 11px;
+    height: 42px;
 
-    text-align: center;
+    border-radius: 50%;
 
-    color: #777;
+    border: 4px solid #e8edf5;
 
-}
+    border-top-color: #3B5998;
 
+    animation:
+        rotation .8s linear infinite;
 
-.image-error {
-
-    padding: 5px;
-
-    font-size: 11px;
-
-    text-align: center;
-
-    color: #c62828;
-
-    background: #fff5f5;
+    margin-bottom: 15px;
 
 }
 
 
-.actions {
+@keyframes rotation {
 
-    display: flex;
+    to {
 
-    gap: 8px;
+        transform: rotate(360deg);
 
-    flex-wrap: wrap;
-
-}
-
-
-.actions button {
-
-    padding: 8px 12px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    cursor: pointer;
-
-    font-size: 13px;
+    }
 
 }
 
 
-.btn-view {
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
-    background: #e8f3ff;
-
-    color: #2563eb;
-
-}
-
-
-.btn-edit {
-
-    background: #fff4d6;
-
-    color: #9a6700;
-
-}
-
-
-.btn-delete {
-
-    background: #ffe5e5;
-
-    color: #c62828;
-
-}
-
-
-.empty {
-
-    text-align: center;
-
-    padding: 30px;
-
-    color: #777;
-
-}
-
-
-@media (max-width: 700px) {
+@media (max-width: 768px) {
 
     .page-header {
 
@@ -662,9 +433,18 @@ th {
     }
 
 
+    .page-header h1 {
+
+        font-size: 26px;
+
+    }
+
+
     .btn-add {
 
         width: 100%;
+
+        justify-content: center;
 
     }
 

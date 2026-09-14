@@ -1,285 +1,709 @@
 <template>
 
-<div class="page">
+    <div class="page">
 
-    <div class="detail-card">
+        <div class="detail-card">
+
+            <!-- ================================================= -->
+            <!-- HEADER PROFIL -->
+            <!-- ================================================= -->
+
+            <div class="profile-header">
+
+                <div class="photo-section">
+
+                    <img
+                        v-if="apprenant.photo"
+                        :src="`http://127.0.0.1:8000/storage/${apprenant.photo}`"
+                        class="photo"
+                        alt="Photo de l'apprenant"
+                    >
+
+                    <div
+                        v-else
+                        class="photo photo-default"
+                    >
+
+                        <i class="fas fa-user"></i>
+
+                    </div>
+
+                </div>
 
 
-        <!-- HEADER PROFIL -->
+                <div class="profile-info">
 
-        <div class="profile-header">
+                    <h2>
+
+                        {{ apprenant.user?.prenom || "" }}
+
+                        {{ apprenant.user?.nom || "" }}
+
+                    </h2>
 
 
-            <div class="photo-section">
+                    <p>
 
-                <img
-                v-if="apprenant.photo"
-                :src="`http://127.0.0.1:8000/storage/${apprenant.photo}`"
-                class="photo"
-                >
+                        Matricule :
 
-                <img
+                        <strong>
+
+                            {{ apprenant.matricule || "-" }}
+
+                        </strong>
+
+                    </p>
+
+
+                    <span class="status">
+
+                        {{ apprenant.statut || "Actif" }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- CHARGEMENT -->
+            <!-- ================================================= -->
+
+            <div
+                v-if="loading"
+                class="loading"
+            >
+
+                <i class="fas fa-spinner fa-spin"></i>
+
+                Chargement...
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- CONTENU -->
+            <!-- ================================================= -->
+
+            <div
                 v-else
-                src="http://127.0.0.1:8000/storage/users/default.png"
-                class="photo"
-                >
+                class="content"
+            >
 
-            </div>
+                <!-- ================================================= -->
+                <!-- INFORMATIONS PERSONNELLES -->
+                <!-- ================================================= -->
 
+                <div class="section">
 
-            <div class="profile-info">
+                    <h3>
 
-                <h2>
-                    {{ apprenant.user?.prenom }}
-                    {{ apprenant.user?.nom }}
-                </h2>
+                        <i class="fas fa-user"></i>
 
-                <p>
-                    Matricule :
-                    <strong>
-                        {{ apprenant.matricule }}
-                    </strong>
-                </p>
+                        Informations personnelles
+
+                    </h3>
 
 
-                <span class="status">
-                    {{ apprenant.statut }}
-                </span>
+                    <div class="grid">
 
-            </div>
+                        <!-- NOM -->
 
+                        <div class="info-card">
 
-        </div>
+                            <label>
+                                Nom
+                            </label>
 
+                            <span>
+                                {{ apprenant.user?.nom || "-" }}
+                            </span>
 
-
-        <div
-        v-if="loading"
-        class="loading"
-        >
-            Chargement...
-        </div>
+                        </div>
 
 
+                        <!-- PRÉNOM -->
 
-        <div
-        v-else
-        class="content"
-        >
+                        <div class="info-card">
 
+                            <label>
+                                Prénom
+                            </label>
 
+                            <span>
+                                {{ apprenant.user?.prenom || "-" }}
+                            </span>
 
-            <div class="section">
-
-                <h3>
-                    👤 Informations personnelles
-                </h3>
-
-
-                <div class="grid">
+                        </div>
 
 
-                    <div class="info-card">
-                        <label>Nom</label>
-                        <span>{{ apprenant.user?.nom }}</span>
+                        <!-- EMAIL -->
+
+                        <div class="info-card">
+
+                            <label>
+                                Email
+                            </label>
+
+                            <span>
+                                {{
+                                    apprenant.user?.email
+                                    || apprenant.email
+                                    || "-"
+                                }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- TÉLÉPHONE -->
+
+                        <div class="info-card">
+
+                            <label>
+                                Téléphone
+                            </label>
+
+                            <span>
+                                {{
+                                    apprenant.telephone
+                                    || apprenant.user?.telephone
+                                    || "-"
+                                }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- DATE NAISSANCE -->
+
+                        <div class="info-card">
+
+                            <label>
+                                Date de naissance
+                            </label>
+
+                            <span>
+                                {{ formaterDate(apprenant.date_naissance) }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- SEXE -->
+
+                        <div class="info-card">
+
+                            <label>
+                                Sexe
+                            </label>
+
+                            <span>
+                                {{ apprenant.sexe || "-" }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- ADRESSE -->
+
+                        <div class="info-card">
+
+                            <label>
+                                Adresse
+                            </label>
+
+                            <span>
+                                {{ apprenant.adresse || "-" }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- SITUATION -->
+
+                        <div class="info-card">
+
+                            <label>
+                                Situation matrimoniale
+                            </label>
+
+                            <span>
+                                {{ apprenant.situation_matrimoniale || "-" }}
+                            </span>
+
+                        </div>
+
                     </div>
-
-
-                    <div class="info-card">
-                        <label>Prénom</label>
-                        <span>{{ apprenant.user?.prenom }}</span>
-                    </div>
-
-
-                    <div class="info-card">
-                        <label>Email</label>
-                        <span>{{ apprenant.user?.email }}</span>
-                    </div>
-
-
-                    <div class="info-card">
-                        <label>Téléphone</label>
-                        <span>{{ apprenant.telephone }}</span>
-                    </div>
-
-
-                    <div class="info-card">
-                        <label>Date naissance</label>
-                        <span>
-                        {{ formaterDate(apprenant.date_naissance) }}
-                        </span>
-                    </div>
-
-
-                    <div class="info-card">
-                        <label>Sexe</label>
-                        <span>{{ apprenant.sexe }}</span>
-                    </div>
-
-
-                    <div class="info-card">
-                        <label>Adresse</label>
-                        <span>{{ apprenant.adresse }}</span>
-                    </div>
-
-
-                    <div class="info-card">
-                        <label>Situation</label>
-                        <span>
-                        {{ apprenant.situation_matrimoniale }}
-                        </span>
-                    </div>
-
 
                 </div>
 
 
-            </div>
+                <!-- ================================================= -->
+                <!-- INFORMATIONS FORMATION -->
+                <!-- ================================================= -->
+
+                <div class="section">
+
+                    <h3>
+
+                        <i class="fas fa-graduation-cap"></i>
+
+                        Formation
+
+                    </h3>
 
 
+                    <!-- AUCUNE INSCRIPTION -->
 
+                    <div
+                        v-if="!inscriptions.length"
+                        class="no-formation"
+                    >
 
-            <div class="section">
+                        <i class="fas fa-info-circle"></i>
 
-                <h3>
-                    🎓 Formation
-                </h3>
+                        Cet apprenant n'a aucune inscription.
 
-
-                <div class="grid">
-
-
-                    <div class="info-card">
-                        <label>Niveau étude</label>
-                        <span>
-                        {{ apprenant.niveau_etude }}
-                        </span>
                     </div>
 
 
-                    <div class="info-card">
-                        <label>Niveau informatique</label>
-                        <span>
-                        {{ apprenant.niveau_informatique }}
-                        </span>
+                    <!-- INSCRIPTIONS -->
+
+                    <div
+                        v-for="inscription in inscriptions"
+                        :key="inscription.id"
+                        class="inscription-card"
+                    >
+
+                        <div class="inscription-title">
+
+                            <i class="fas fa-graduation-cap"></i>
+
+                            <strong>
+
+                                {{
+                                    inscription.formation?.nom
+                                    || "Formation inconnue"
+                                }}
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="grid">
+
+                            <!-- NIVEAU ÉTUDE -->
+
+                            <div class="info-card">
+
+                                <label>
+                                    Niveau d'étude
+                                </label>
+
+                                <span>
+                                    {{ apprenant.niveau_etude || "-" }}
+                                </span>
+
+                            </div>
+
+
+                            <!-- NIVEAU INFORMATIQUE -->
+
+                            <div class="info-card">
+
+                                <label>
+                                    Niveau informatique
+                                </label>
+
+                                <span>
+                                    {{ apprenant.niveau_informatique || "-" }}
+                                </span>
+
+                            </div>
+
+
+                            <!-- FORMATION -->
+
+                            <div class="info-card">
+
+                                <label>
+                                    Formation
+                                </label>
+
+                                <span>
+                                    {{ inscription.formation?.nom || "-" }}
+                                </span>
+
+                            </div>
+
+
+                            <!-- HORAIRE -->
+
+                            <div class="info-card">
+
+                                <label>
+                                    Horaire
+                                </label>
+
+                                <span>
+                                    {{ inscription.horaire || "-" }}
+                                </span>
+
+                            </div>
+
+
+                            <!-- DATE INSCRIPTION -->
+
+                            <div class="info-card">
+
+                                <label>
+                                    Date d'inscription
+                                </label>
+
+                                <span>
+                                    {{ formaterDate(inscription.date_inscription) }}
+                                </span>
+
+                            </div>
+
+
+                            <!-- STATUT -->
+
+                            <div class="info-card">
+
+                                <label>
+                                    Statut
+                                </label>
+
+                                <span
+                                    :class="[
+                                        'badge',
+                                        getStatutClass(inscription.statut)
+                                    ]"
+                                >
+
+                                    <span class="status-dot"></span>
+
+                                    {{ inscription.statut || "-" }}
+
+                                </span>
+
+                            </div>
+
+
+                            <!-- ÉTAT FORMATION -->
+
+                            <div class="info-card">
+
+                                <label>
+                                    État de la formation
+                                </label>
+
+                                <span>
+                                    {{ inscription.etat_formation || "-" }}
+                                </span>
+
+                            </div>
+
+
+                            <!-- CAPACITÉ -->
+
+                            <div class="info-card">
+
+                                <label>
+                                    Capacité de la formation
+                                </label>
+
+                                <span>
+
+                                    {{
+                                        inscription.formation?.capacite
+                                            ? inscription.formation.capacite + " apprenants"
+                                            : "Illimitée"
+                                    }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
                     </div>
-
-
-                    <div class="info-card">
-                        <label>Module choisi</label>
-                        <span>
-                        {{ apprenant.module_choisi }}
-                        </span>
-                    </div>
-
-
-                    <div class="info-card">
-                        <label>Horaire</label>
-                        <span>
-                        {{ apprenant.horaire_choisi }}
-                        </span>
-                    </div>
-
-
-                    <div class="info-card">
-                        <label>Date inscription</label>
-                        <span>
-                        {{ formaterDate(apprenant.date_inscription) }}
-                        </span>
-                    </div>
-
-
-                    <div class="info-card">
-                        <label>Fonction</label>
-                        <span>
-                        {{ apprenant.fonction || "-" }}
-                        </span>
-                    </div>
-
 
                 </div>
 
 
+                <!-- ================================================= -->
+                <!-- INFORMATIONS COMPLÉMENTAIRES -->
+                <!-- ================================================= -->
+
+                <div class="section">
+
+                    <h3>
+
+                        <i class="fas fa-briefcase"></i>
+
+                        Informations complémentaires
+
+                    </h3>
+
+
+                    <div class="grid">
+
+                        <!-- FONCTION -->
+
+                        <div class="info-card">
+
+                            <label>
+                                Fonction
+                            </label>
+
+                            <span>
+                                {{ apprenant.fonction || "-" }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- MATRICULE -->
+
+                        <div class="info-card">
+
+                            <label>
+                                Matricule
+                            </label>
+
+                            <span>
+                                {{ apprenant.matricule || "-" }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- RETOUR -->
+                <!-- ================================================= -->
+
+                <div class="actions">
+
+                    <button
+                        type="button"
+                        class="btn-retour"
+                        @click="retour"
+                    >
+
+                        <i class="fas fa-arrow-left"></i>
+
+                        Retour
+
+                    </button>
+
+                </div>
+
             </div>
 
-<!-- ACTIONS -->
-
-<div class="actions">
-
-    <button 
-    class="btn-retour"
-    @click="$router.back()"
-    >
-        <i class="fas fa-arrow-left"></i>
-        Retour
-    </button>
-
-
-</div>
-
         </div>
-
 
     </div>
-
-
-
-
-
-</div>
 
 </template>
 
 
-
-
 <script setup>
 
-import { ref, onMounted } from "vue";
+import {
+    ref,
+    computed,
+    onMounted
+} from "vue";
 
-import { useRoute } from "vue-router";
+import {
+    useRoute,
+    useRouter
+} from "vue-router";
 
-import { getApprenant } from "../../../services/apprenantService";
+import {
+    getApprenant
+} from "../../../services/apprenantService";
+
+
+/* =====================================================
+   ROUTER
+===================================================== */
 
 const route = useRoute();
+
+const router = useRouter();
+
+
+/* =====================================================
+   DONNÉES
+===================================================== */
 
 const apprenant = ref({});
 
 const loading = ref(true);
 
 
+/* =====================================================
+   INSCRIPTIONS
+===================================================== */
 
-// ==========================
-// FORMATER LES DATES
-// ==========================
+const inscriptions = computed(() => {
 
-const formaterDate = (date) => {
+    if (
+        !apprenant.value ||
+        !Array.isArray(apprenant.value.inscriptions)
+    ) {
 
-    if (!date) return "-";
+        return [];
 
-    return new Date(date).toLocaleDateString("fr-FR");
+    }
 
-};
+    return apprenant.value.inscriptions;
+
+});
 
 
+/* =====================================================
+   FORMATER DATE
+===================================================== */
 
-// ==========================
-// CHARGER APPRENANT
-// ==========================
+function formaterDate(date) {
 
-const charger = async () => {
+    if (!date) {
+
+        return "-";
+
+    }
 
     try {
 
-        const response = await getApprenant(route.params.id);
+        return new Date(date).toLocaleDateString(
+            "fr-FR",
+            {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+            }
+        );
 
-        apprenant.value = response.data;
+    }
+
+    catch {
+
+        return "-";
+
+    }
+
+}
+
+
+/* =====================================================
+   CLASSE STATUT
+===================================================== */
+
+function getStatutClass(statut) {
+
+    if (!statut) {
+
+        return "statut-default";
+
+    }
+
+
+    const valeur =
+        statut
+            .toLowerCase()
+            .trim();
+
+
+    if (
+        valeur.includes("valid")
+        ||
+        valeur.includes("accept")
+        ||
+        valeur.includes("inscrit")
+    ) {
+
+        return "statut-valide";
+
+    }
+
+
+    if (
+        valeur.includes("attente")
+        ||
+        valeur.includes("pending")
+    ) {
+
+        return "statut-attente";
+
+    }
+
+
+    if (
+        valeur.includes("refus")
+        ||
+        valeur.includes("annul")
+    ) {
+
+        return "statut-refuse";
+
+    }
+
+
+    return "statut-default";
+
+}
+
+
+/* =====================================================
+   CHARGER APPRENANT
+===================================================== */
+
+async function charger() {
+
+    loading.value = true;
+
+
+    try {
+
+        const response =
+            await getApprenant(
+                route.params.id
+            );
+
+
+        apprenant.value =
+            response.data;
+
+
+        console.log(
+            "Apprenant chargé :",
+            apprenant.value
+        );
 
     }
 
     catch (error) {
 
-        console.log(error);
+        console.error(
+            "Erreur chargement apprenant :",
+            error
+        );
+
+        console.error(
+            "Réponse API :",
+            error.response?.data
+        );
 
     }
 
@@ -289,13 +713,23 @@ const charger = async () => {
 
     }
 
-};
+}
 
 
+/* =====================================================
+   RETOUR
+===================================================== */
 
-// ==========================
-// AU CHARGEMENT
-// ==========================
+function retour() {
+
+    router.back();
+
+}
+
+
+/* =====================================================
+   MOUNTED
+===================================================== */
 
 onMounted(() => {
 
@@ -306,359 +740,666 @@ onMounted(() => {
 </script>
 
 
-
-
 <style scoped>
 
+/* =========================================================
+   PAGE
+========================================================= */
 
-.page{
+.page {
 
-    padding:40px;
+    width: 100%;
 
-    background:#f1f5f9;
+    min-height: 100vh;
 
-    min-height:100vh;
+    padding: 35px;
+
+    background: #f1f5f9;
 
 }
 
 
+/* =========================================================
+   CARTE PRINCIPALE
+========================================================= */
 
-/* CARD PRINCIPALE */
+.detail-card {
 
-.detail-card{
+    width: 100%;
 
-    max-width:1000px;
+    max-width: 1100px;
 
-    margin:auto;
+    margin: 0 auto;
 
-    background:white;
+    background: #ffffff;
 
-    border-radius:25px;
+    border-radius: 22px;
 
-    overflow:hidden;
+    overflow: hidden;
+
+    border: 1px solid #e2e8f0;
 
     box-shadow:
-    0 20px 40px rgba(0,0,0,.08);
+        0 15px 40px rgba(15, 23, 42, 0.08);
 
 }
 
 
+/* =========================================================
+   HEADER PROFIL
+========================================================= */
 
-/* HEADER */
-
-.profile-header{
-
+.profile-header {
 
     background:
-    linear-gradient(
-    135deg,
-    #3B5998 ,
-    #2E7D32
-    );
+        linear-gradient(
+            135deg,
+            #3B5998,
+            #2E7D32
+        );
 
+    padding: 35px 40px;
 
-    padding:35px;
+    color: #ffffff;
 
-    color:white;
+    display: flex;
 
-    display:flex;
+    align-items: center;
 
-    align-items:center;
-
-    gap:30px;
+    gap: 28px;
 
 }
 
 
+/* =========================================================
+   PHOTO
+========================================================= */
 
-.photo{
+.photo {
 
-    width:150px;
+    width: 125px;
 
-    height:150px;
+    height: 125px;
 
-    border-radius:50%;
+    border-radius: 50%;
 
-    object-fit:cover;
+    object-fit: cover;
 
-    border:6px solid white;
+    border: 5px solid #ffffff;
 
     box-shadow:
-    0 10px 25px rgba(0,0,0,.3);
+        0 8px 25px rgba(0, 0, 0, .25);
 
 }
 
 
+.photo-default {
 
-.profile-info h2{
+    display: flex;
 
-    font-size:28px;
+    align-items: center;
 
-    margin-bottom:10px;
+    justify-content: center;
 
-}
+    background: rgba(255,255,255,.2);
 
-
-.profile-info p{
-
-    opacity:.9;
+    font-size: 45px;
 
 }
 
 
+/* =========================================================
+   INFORMATIONS PROFIL
+========================================================= */
 
-.status{
+.profile-info h2 {
 
+    margin: 0 0 10px;
 
-    display:inline-block;
+    font-size: 28px;
 
-    margin-top:15px;
-
-    background:white;
-
-    color:#15803d;
-
-    padding:8px 20px;
-
-    border-radius:30px;
-
-    font-weight:600;
+    font-weight: 800;
 
 }
 
 
+.profile-info p {
 
-/* CONTENU */
+    margin: 0;
 
+    font-size: 15px;
 
-.content{
-
-    padding:35px;
-
-}
-
-
-
-.section{
-
-    margin-bottom:40px;
+    opacity: .95;
 
 }
 
 
+.profile-info p strong {
 
-.section h3{
-
-    color:#3B5998 ;
-
-    margin-bottom:20px;
-
-    font-size:20px;
+    font-weight: 800;
 
 }
 
 
+.status {
 
-/* GRID */
+    display: inline-flex;
+
+    align-items: center;
+
+    margin-top: 15px;
+
+    padding: 7px 18px;
+
+    border-radius: 30px;
+
+    background: #ffffff;
+
+    color: #15803d;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+}
 
 
-.grid{
+/* =========================================================
+   CONTENU
+========================================================= */
 
-    display:grid;
+.content {
+
+    padding: 35px 40px;
+
+}
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.section {
+
+    margin-bottom: 38px;
+
+}
+
+
+.section h3 {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin: 0 0 20px;
+
+    color: #3B5998;
+
+    font-size: 19px;
+
+    font-weight: 800;
+
+}
+
+
+.section h3 i {
+
+    font-size: 18px;
+
+}
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.grid {
+
+    display: grid;
 
     grid-template-columns:
-    repeat(2,1fr);
+        repeat(2, minmax(0, 1fr));
 
-    gap:20px;
-
-}
-
-
-
-.info-card{
-
-
-    background:#f8fafc;
-
-    padding:18px;
-
-    border-radius:15px;
-
-    border:1px solid #e2e8f0;
-
-    transition:.3s;
-
+    gap: 16px;
 
 }
 
 
-.info-card:hover{
+/* =========================================================
+   INFO CARD
+========================================================= */
+
+.info-card {
+
+    padding: 17px 19px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 14px;
+
+    transition: .2s ease;
+
+}
 
 
-    transform:translateY(-4px);
+.info-card:hover {
+
+    transform: translateY(-2px);
+
+    border-color: #cbd5e1;
 
     box-shadow:
-    0 10px 20px rgba(0,0,0,.08);
-
-
-}
-
-
-
-.info-card label{
-
-
-    display:block;
-
-    color:#64748b;
-
-    font-size:14px;
-
-    margin-bottom:8px;
+        0 7px 18px rgba(15,23,42,.06);
 
 }
 
 
+.info-card label {
 
-.info-card span{
+    display: block;
 
+    margin-bottom: 7px;
 
-    font-weight:600;
+    color: #64748b;
 
-    color:#1e293b;
+    font-size: 12px;
 
-    word-break:break-word;
-
-}
-
-
-
-/* LOADING */
-
-
-.loading{
-
-
-padding:50px;
-
-text-align:center;
-
-color:#3B5998 ;
-
-font-size:20px;
-
+    font-weight: 700;
 
 }
 
 
+.info-card span {
 
+    display: block;
 
-@media(max-width:768px){
+    color: #1e293b;
 
+    font-size: 14px;
 
-.page{
+    font-weight: 700;
 
-padding:15px;
-
-}
-
-
-.profile-header{
-
-flex-direction:column;
-
-text-align:center;
+    word-break: break-word;
 
 }
 
 
-.grid{
+/* =========================================================
+   CARTE INSCRIPTION
+========================================================= */
 
-grid-template-columns:1fr;
+.inscription-card {
 
-}
+    padding: 22px;
 
+    margin-bottom: 18px;
 
-.photo{
+    background: #ffffff;
 
-width:120px;
+    border: 1px solid #e2e8f0;
 
-height:120px;
+    border-radius: 17px;
 
-}
-
-
-}
-
-
-
-
-
-
-/* ================= ACTIONS ================= */
-
-.actions{
-
-    margin-top:30px;
-
-    display:flex;
-
-    justify-content:flex-end;
+    box-shadow:
+        0 5px 18px rgba(15,23,42,.05);
 
 }
 
 
-.btn-retour{
+/* =========================================================
+   TITRE INSCRIPTION
+========================================================= */
 
+.inscription-title {
 
-    display:flex;
+    display: flex;
 
-    align-items:center;
+    align-items: center;
 
-    gap:10px;
+    gap: 10px;
 
+    margin-bottom: 18px;
 
-    background: #3B5998 ;
+    padding-bottom: 14px;
 
-    color:white;
+    color: #3B5998;
 
-    border:none;
+    border-bottom: 1px solid #e2e8f0;
 
-    padding:12px 25px;
-
-    border-radius:12px;
-
-    font-size:15px;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    transition:.3s;
-
+    font-size: 17px;
 
 }
 
 
+.inscription-title i {
 
-.btn-retour:hover{
+    font-size: 18px;
 
+}
+
+
+/* =========================================================
+   MESSAGE AUCUNE FORMATION
+========================================================= */
+
+.no-formation {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 25px;
+
+    background: #f8fafc;
+
+    border: 1px dashed #cbd5e1;
+
+    border-radius: 15px;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.badge {
+
+    display: inline-flex !important;
+
+    align-items: center;
+
+    gap: 7px;
+
+    width: fit-content;
+
+    padding: 7px 12px;
+
+    border-radius: 30px;
+
+    font-size: 12px !important;
+
+    font-weight: 800 !important;
+
+}
+
+
+.status-dot {
+
+    width: 7px;
+
+    height: 7px;
+
+    border-radius: 50%;
+
+}
+
+
+/* =========================================================
+   STATUT VALIDE
+========================================================= */
+
+.statut-valide {
+
+    background: #ecfdf3;
+
+    color: #15803d !important;
+
+}
+
+
+.statut-valide .status-dot {
+
+    background: #22c55e;
+
+}
+
+
+/* =========================================================
+   STATUT ATTENTE
+========================================================= */
+
+.statut-attente {
+
+    background: #fff7df;
+
+    color: #a66a00 !important;
+
+}
+
+
+.statut-attente .status-dot {
+
+    background: #f59e0b;
+
+}
+
+
+/* =========================================================
+   STATUT REFUSE
+========================================================= */
+
+.statut-refuse {
+
+    background: #fff1f2;
+
+    color: #dc2626 !important;
+
+}
+
+
+.statut-refuse .status-dot {
+
+    background: #ef4444;
+
+}
+
+
+/* =========================================================
+   STATUT DEFAULT
+========================================================= */
+
+.statut-default {
+
+    background: #f1f5f9;
+
+    color: #64748b !important;
+
+}
+
+
+.statut-default .status-dot {
+
+    background: #94a3b8;
+
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading {
+
+    min-height: 300px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    color: #3B5998;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    padding-top: 5px;
+
+}
+
+
+/* =========================================================
+   BOUTON RETOUR
+========================================================= */
+
+.btn-retour {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    padding: 12px 22px;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background: #3B5998;
+
+    color: #ffffff;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition: .2s ease;
+
+}
+
+
+.btn-retour:hover {
 
     background: #2E7D32;
 
-    transform:translateY(-3px);
+    transform: translateY(-2px);
 
     box-shadow:
-    0 8px 20px rgba(37,99,235,.3);
+        0 7px 18px rgba(59,89,152,.25);
 
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .page {
+
+        padding: 15px;
+
+    }
+
+
+    .profile-header {
+
+        padding: 25px 20px;
+
+        flex-direction: column;
+
+        text-align: center;
+
+    }
+
+
+    .profile-info h2 {
+
+        font-size: 23px;
+
+    }
+
+
+    .content {
+
+        padding: 25px 20px;
+
+    }
+
+
+    .grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .actions {
+
+        justify-content: stretch;
+
+    }
+
+
+    .btn-retour {
+
+        width: 100%;
+
+    }
 
 }
 
 
+@media (max-width: 480px) {
 
-.btn-retour i{
+    .page {
 
-    font-size:14px;
+        padding: 10px;
+
+    }
+
+
+    .detail-card {
+
+        border-radius: 15px;
+
+    }
+
+
+    .photo {
+
+        width: 105px;
+
+        height: 105px;
+
+    }
 
 }
+
 </style>

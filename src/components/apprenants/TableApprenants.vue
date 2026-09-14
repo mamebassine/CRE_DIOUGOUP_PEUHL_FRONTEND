@@ -1,404 +1,827 @@
 <template>
 
-<div class="table-card">
+    <div class="table-card">
 
+        <!-- ================= EN-TÊTE DU TABLEAU ================= -->
 
-<table>
+        <div class="table-top">
 
+            <div class="table-title">
 
-<thead>
+                <div class="title-icon">
+                    <i class="fas fa-users"></i>
+                </div>
 
-<tr>
+                <div>
+                    <h3>Liste des apprenants</h3>
 
-<th>
-Photo
-</th>
+                    <p>
+                        {{ apprenants.length }}
+                        {{ apprenants.length > 1 ? "apprenants" : "apprenant" }}
+                    </p>
+                </div>
 
-<th>
-Nom complet
-</th>
+            </div>
 
-<th>
-Email
-</th>
+        </div>
 
-<th>
-Statut
-</th>
 
-<th>
-Actions
-</th>
+        <!-- ================= TABLEAU ================= -->
 
-</tr>
+        <div class="table-container">
 
-</thead>
+            <table>
 
+                <thead>
 
+                    <tr>
 
+                        <th>APPRENANT</th>
 
-<tbody>
+                        <th>EMAIL</th>
 
+                        <th>STATUT</th>
 
-<tr
-v-for="apprenant in apprenants"
-:key="apprenant.id"
->
+                        <th class="actions-header">
+                            ACTIONS
+                        </th>
 
-<!-- PHOTO -->
+                    </tr>
 
-<td>
+                </thead>
 
-<img
-v-if="apprenant.photo"
-:src="`http://127.0.0.1:8000/storage/${apprenant.photo}`"
-class="photo"
->
 
-<img
-v-else
-src="http://127.0.0.1:8000/storage/default.png"
-class="photo"
->
+                <tbody>
 
-</td>
+                    <!-- ================= APPRENANTS ================= -->
 
+                    <tr
+                        v-for="apprenant in apprenants"
+                        :key="apprenant.id"
+                    >
 
+                        <!-- APPRENANT -->
 
-<!-- NOM -->
+                        <td>
 
-<td>
+                            <div class="student-info">
 
-{{ apprenant.user?.nom }}
-{{ apprenant.user?.prenom }}
+                                <div class="photo-container">
 
-</td>
+                                    <img
+                                        v-if="apprenant.photo"
+                                        :src="`http://127.0.0.1:8000/storage/${apprenant.photo}`"
+                                        class="photo"
+                                        alt="Photo apprenant"
+                                    >
 
+                                    <img
+                                        v-else
+                                        src="http://127.0.0.1:8000/storage/default.png"
+                                        class="photo"
+                                        alt="Photo par défaut"
+                                    >
 
+                                </div>
 
-<!-- EMAIL -->
 
-<td>
+                                <div class="student-details">
 
-{{ apprenant.user?.email }}
+                                    <strong>
+                                        {{ apprenant.user?.nom || "-" }}
+                                        {{ apprenant.user?.prenom || "" }}
+                                    </strong>
 
-</td>
+                                    <span>
+                                        Matricule :
+                                        {{ apprenant.matricule || "-" }}
+                                    </span>
 
+                                </div>
 
+                            </div>
 
-<!-- STATUT -->
+                        </td>
 
-<td>
 
-<span
-:class="statutClass(apprenant.statut)"
->
+                        <!-- EMAIL -->
 
-{{ apprenant.statut }}
+                        <td>
 
-</span>
+                            <div class="email">
 
-</td>
+                                <i class="fas fa-envelope"></i>
 
+                                <span>
+                                    {{ apprenant.user?.email || "-" }}
+                                </span>
 
+                            </div>
 
-<!-- ACTIONS -->
+                        </td>
 
-<td class="actions">
 
-<button
-class="btn-view"
-@click="$emit('voir', apprenant.id)"
->
+                        <!-- STATUT -->
 
-<i class="fas fa-eye"></i>
+                        <td>
 
-</button>
+                            <span
+                                :class="statutClass(apprenant.statut)"
+                            >
 
+                                <span class="status-dot"></span>
 
+                                {{ apprenant.statut || "En attente" }}
 
-<button
-class="btn-edit"
-@click="$emit('modifier', apprenant.id)"
->
+                            </span>
 
-<i class="fas fa-edit"></i>
+                        </td>
 
-</button>
 
+                        <!-- ACTIONS -->
 
+                        <td>
 
-<button
-class="btn-delete"
-@click="$emit('supprimer', apprenant.id)"
->
+                            <div class="actions">
 
-<i class="fas fa-trash"></i>
+                                <!-- VOIR -->
 
-</button>
+                                <button
+                                    class="action-btn view"
+                                    title="Voir le profil"
+                                    @click="$emit('voir', apprenant.id)"
+                                >
 
-</td>
+                                    <i class="fas fa-eye"></i>
 
-</tr>
+                                </button>
 
 
+                                <!-- MODIFIER -->
 
+                                <button
+                                    class="action-btn edit"
+                                    title="Modifier"
+                                    @click="$emit('modifier', apprenant.id)"
+                                >
 
-</tbody>
+                                    <i class="fas fa-pen"></i>
 
+                                </button>
 
-</table>
 
+                                <!-- SUPPRIMER -->
 
+                                <button
+                                    class="action-btn delete"
+                                    title="Supprimer"
+                                    @click="$emit('supprimer', apprenant.id)"
+                                >
 
-</div>
+                                    <i class="fas fa-trash-alt"></i>
 
+                                </button>
 
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- ================= AUCUN APPRENANT ================= -->
+
+                    <tr v-if="apprenants.length === 0">
+
+                        <td
+                            colspan="4"
+                            class="empty-state"
+                        >
+
+                            <div class="empty-icon">
+
+                                <i class="fas fa-user-graduate"></i>
+
+                            </div>
+
+                            <h4>Aucun apprenant trouvé</h4>
+
+                            <p>
+                                Aucun apprenant ne correspond à votre recherche.
+                            </p>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </template>
 
 
-
-
-
-
-
-
 <script setup>
-
 
 defineProps({
 
-    apprenants:{
-        type:Array,
-        default:[]
+    apprenants: {
+        type: Array,
+        default: () => []
     }
 
 });
 
 
+defineEmits([
+    "voir",
+    "modifier",
+    "supprimer"
+]);
 
 
+/* ================= STATUT ================= */
 
-const statutClass=(statut)=>{
+const statutClass = (statut) => {
 
-
-    if(statut==="Valide")
+    if (statut === "Valide") {
         return "badge valide";
+    }
 
-
-    if(statut==="Refuse")
+    if (statut === "Refuse") {
         return "badge refuse";
-
+    }
 
     return "badge attente";
 
-
 };
-
-const formaterDate = (date) => {
-
-    if (!date) return "-";
-
-    return new Date(date).toLocaleDateString("fr-FR");
-
-};
-
-
 
 </script>
 
 
-
 <style scoped>
 
-.table-card{
+/* ================================================= */
+/* CARTE PRINCIPALE */
+/* ================================================= */
 
-    width:100%;
+.table-card {
 
-    background:white;
+    width: 100%;
 
-    border-radius:20px;
+    background: #ffffff;
 
-    padding:25px;
+    border-radius: 18px;
 
-    overflow-x:auto;
+    border: 1px solid #e8edf5;
 
-    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
 
-}
-
-
-
-table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
-   min-width:650px;
+    overflow: hidden;
 
 }
 
 
+/* ================================================= */
+/* EN-TÊTE */
+/* ================================================= */
 
-thead{
+.table-top {
 
-    background:#F8FAFC;
+    padding: 22px 25px;
 
-}
+    border-bottom: 1px solid #edf1f7;
 
-
-
-th{
-
-    color:#3B5998;
-
-    font-weight:800;
-
-    padding:18px;
-
-    text-align:left;
-
-    white-space:nowrap;
+    background: #ffffff;
 
 }
 
 
+.table-title {
 
-td{
+    display: flex;
 
-    padding:15px;
+    align-items: center;
 
-    border-bottom:1px solid #eee;
-
-    white-space:nowrap;
-
-}
-
-
-
-tbody tr:hover{
-
-    background:#F8FAFC;
+    gap: 14px;
 
 }
 
 
+.title-icon {
 
-.photo{
+    width: 45px;
 
-    width:45px;
+    height: 45px;
 
-    height:45px;
+    border-radius: 12px;
 
-    border-radius:50%;
+    display: flex;
 
-    object-fit:cover;
+    align-items: center;
 
-    border:2px solid #3B5998;
+    justify-content: center;
 
-}
+    background: #eef2ff;
 
+    color: #3B5998;
 
-
-.actions{
-
-    display:flex;
-
-    gap:8px;
+    font-size: 18px;
 
 }
 
 
+.table-title h3 {
 
-.actions button{
+    margin: 0;
 
-    width:35px;
+    color: #1e293b;
 
-    height:35px;
+    font-size: 18px;
 
-    border:none;
-
-    border-radius:8px;
-
-    cursor:pointer;
+    font-weight: 800;
 
 }
 
 
+.table-title p {
 
-.btn-view{
+    margin: 4px 0 0;
 
-    background:#3B5998;
+    color: #94a3b8;
 
-    color:white;
-
-}
-
-
-
-.btn-edit{
-
-    background:#2E7D32;
-
-    color:white;
+    font-size: 13px;
 
 }
 
 
+/* ================================================= */
+/* CONTENEUR */
+/* ================================================= */
 
-.btn-delete{
+.table-container {
 
-    background:#dc2626;
+    width: 100%;
 
-    color:white;
-
-}
-
-
-
-.badge{
-
-    padding:5px 12px;
-
-    border-radius:20px;
-
-    font-size:13px;
-
-    font-weight:bold;
+    overflow-x: auto;
 
 }
 
 
+/* ================================================= */
+/* TABLE */
+/* ================================================= */
 
-.valide{
+table {
 
-    background:#dcfce7;
+    width: 100%;
 
-    color:#166534;
+    min-width: 750px;
 
-}
-
-
-
-.refuse{
-
-    background:#fee2e2;
-
-    color:#991b1b;
+    border-collapse: collapse;
 
 }
 
 
+thead {
 
-.attente{
-
-    background:#fef3c7;
-
-    color:#92400e;
+    background: #f8fafc;
 
 }
 
+
+th {
+
+    padding: 15px 22px;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: .7px;
+
+    text-align: left;
+
+    border-bottom: 1px solid #e9eef5;
+
+}
+
+
+.actions-header {
+
+    text-align: center;
+
+}
+
+
+td {
+
+    padding: 17px 22px;
+
+    border-bottom: 1px solid #f0f2f6;
+
+    color: #334155;
+
+}
+
+
+tbody tr {
+
+    transition: .2s ease;
+
+}
+
+
+tbody tr:hover {
+
+    background: #f8faff;
+
+}
+
+
+tbody tr:last-child td {
+
+    border-bottom: none;
+
+}
+
+
+/* ================================================= */
+/* INFORMATIONS APPRENANT */
+/* ================================================= */
+
+.student-info {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+}
+
+
+.photo-container {
+
+    position: relative;
+
+}
+
+
+.photo {
+
+    width: 48px;
+
+    height: 48px;
+
+    border-radius: 14px;
+
+    object-fit: cover;
+
+    border: 2px solid #e7ecf5;
+
+    display: block;
+
+}
+
+
+.student-details {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+}
+
+
+.student-details strong {
+
+    color: #1e293b;
+
+    font-size: 14px;
+
+    font-weight: 750;
+
+}
+
+
+.student-details span {
+
+    color: #94a3b8;
+
+    font-size: 11px;
+
+}
+
+
+/* ================================================= */
+/* EMAIL */
+/* ================================================= */
+
+.email {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+}
+
+
+.email i {
+
+    color: #3B5998;
+
+    font-size: 13px;
+
+}
+
+
+/* ================================================= */
+/* STATUT */
+/* ================================================= */
+
+.badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 12px;
+
+    border-radius: 30px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+}
+
+
+.status-dot {
+
+    width: 7px;
+
+    height: 7px;
+
+    border-radius: 50%;
+
+}
+
+
+.valide {
+
+    background: #ecfdf3;
+
+    color: #15803d;
+
+}
+
+
+.valide .status-dot {
+
+    background: #22c55e;
+
+}
+
+
+.refuse {
+
+    background: #fff1f2;
+
+    color: #dc2626;
+
+}
+
+
+.refuse .status-dot {
+
+    background: #ef4444;
+
+}
+
+
+.attente {
+
+    background: #fff8e6;
+
+    color: #b45309;
+
+}
+
+
+.attente .status-dot {
+
+    background: #f59e0b;
+
+}
+
+
+/* ================================================= */
+/* ACTIONS */
+/* ================================================= */
+
+.actions {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 7px;
+
+}
+
+
+.action-btn {
+
+    width: 34px;
+
+    height: 34px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+
+    font-size: 13px;
+
+}
+
+
+.action-btn:hover {
+
+    transform: translateY(-2px);
+
+}
+
+
+.view {
+
+    background: #eef2ff;
+
+    color: #3B5998;
+
+}
+
+
+.view:hover {
+
+    background: #3B5998;
+
+    color: white;
+
+}
+
+
+.edit {
+
+    background: #ecfdf3;
+
+    color: #15803d;
+
+}
+
+
+.edit:hover {
+
+    background: #2E7D32;
+
+    color: white;
+
+}
+
+
+.delete {
+
+    background: #fff1f2;
+
+    color: #dc2626;
+
+}
+
+
+.delete:hover {
+
+    background: #dc2626;
+
+    color: white;
+
+}
+
+
+/* ================================================= */
+/* ÉTAT VIDE */
+/* ================================================= */
+
+.empty-state {
+
+    text-align: center;
+
+    padding: 55px 20px !important;
+
+}
+
+
+.empty-icon {
+
+    width: 60px;
+
+    height: 60px;
+
+    margin: 0 auto 15px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #f1f5f9;
+
+    color: #94a3b8;
+
+    font-size: 23px;
+
+}
+
+
+.empty-state h4 {
+
+    margin: 0 0 6px;
+
+    color: #334155;
+
+    font-size: 15px;
+
+}
+
+
+.empty-state p {
+
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+
+}
+
+
+/* ================================================= */
+/* RESPONSIVE */
+/* ================================================= */
+
+@media (max-width: 700px) {
+
+    .table-top {
+
+        padding: 18px;
+
+    }
+
+    th,
+    td {
+
+        padding: 14px 15px;
+
+    }
+
+    .table-card {
+
+        border-radius: 14px;
+
+    }
+
+}
 
 </style>

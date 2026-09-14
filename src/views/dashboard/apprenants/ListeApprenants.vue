@@ -22,21 +22,7 @@
 
         </div>
 
-
-
-        <RouterLink
-            to="/dashboard/apprenants/ajouter"
-            class="btn-add"
-        >
-
-            <i class="fas fa-user-plus"></i>
-
-            Ajouter un apprenant
-
-        </RouterLink>
-
-
-    </div>
+</div>
 
 
 
@@ -476,43 +462,6 @@ onMounted(()=>{
 
 
 }
-
-
-
-
-.btn-add{
-
-
-    background: #2E7D32;
-
-    color:white;
-
-    padding:12px 20px;
-
-    border-radius:12px;
-
-    text-decoration:none;
-
-    font-weight:700;
-
-    transition:.3s;
-
-
-}
-
-
-
-.btn-add:hover{
-
-
-    background:#3B5998;
-
-    transform:translateY(-2px);
-
-
-}
-
-
 
 
 .loading{

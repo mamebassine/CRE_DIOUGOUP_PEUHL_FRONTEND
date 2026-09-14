@@ -11,6 +11,7 @@ import {
 
 } from "../services/inscriptionService";
 
+
 export const useInscriptionStore = defineStore("inscription", {
 
     state: () => ({
@@ -21,11 +22,13 @@ export const useInscriptionStore = defineStore("inscription", {
 
     }),
 
+
     actions: {
 
-        // ============================
+
+        // ==========================================
         // LISTE
-        // ============================
+        // ==========================================
 
         async fetchInscriptions() {
 
@@ -33,11 +36,16 @@ export const useInscriptionStore = defineStore("inscription", {
 
             try {
 
-                const response = await getInscriptions();
+                const response =
+                    await getInscriptions();
 
-                this.inscriptions = response.data;
+                this.inscriptions =
+                    response.data.data ??
+                    response.data;
 
-            } finally {
+            }
+
+            finally {
 
                 this.loading = false;
 
@@ -45,85 +53,124 @@ export const useInscriptionStore = defineStore("inscription", {
 
         },
 
-        // ============================
+
+        // ==========================================
         // DETAIL
-        // ============================
+        // ==========================================
 
         async fetchInscription(id) {
 
-            const response = await getInscription(id);
+            const response =
+                await getInscription(id);
 
-            this.inscription = response.data;
+            this.inscription =
+                response.data.data ??
+                response.data;
+
+            return response;
 
         },
 
-        // ============================
+
+        // ==========================================
         // AJOUT APPRENANT
-        // ============================
+        // ==========================================
 
         async ajouterInscription(data) {
 
-            const response = await createInscription(data);
+            const response =
+                await createInscription(data);
 
-            if (response.data.data) {
+            const inscription =
+                response.data.data;
 
-                this.inscriptions.push(response.data.data);
+            if (inscription) {
+
+                this.inscriptions.push(
+                    inscription
+                );
 
             }
 
+            return response;
+
         },
 
-        // ============================
+
+        // ==========================================
         // AJOUT ADMIN
-        // ============================
+        // ==========================================
 
         async ajouterInscriptionAdmin(data) {
 
-            const response = await inscriptionAdmin(data);
+            const response =
+                await inscriptionAdmin(data);
 
-            if (response.data.data) {
+            const inscription =
+                response.data.data;
 
-                this.inscriptions.push(response.data.data);
+            if (inscription) {
+
+                this.inscriptions.unshift(
+                    inscription
+                );
 
             }
 
+            return response;
+
         },
 
-        // ============================
+
+        // ==========================================
         // MODIFICATION
-        // ============================
+        // ==========================================
 
         async modifierInscription(id, data) {
 
-            const response = await updateInscription(id, data);
+            const response =
+                await updateInscription(
+                    id,
+                    data
+                );
 
-            const index = this.inscriptions.findIndex(
+            const inscription =
+                response.data.data;
 
-                inscription => inscription.id == id
+            const index =
+                this.inscriptions.findIndex(
+                    inscription =>
+                        inscription.id == id
+                );
 
-            );
+            if (
+                index !== -1 &&
+                inscription
+            ) {
 
-            if (index !== -1 && response.data.data) {
-
-                this.inscriptions[index] = response.data.data;
+                this.inscriptions[index] =
+                    inscription;
 
             }
 
+            return response;
+
         },
 
-        // ============================
+
+        // ==========================================
         // SUPPRESSION
-        // ============================
+        // ==========================================
 
         async supprimerInscription(id) {
 
             await deleteInscription(id);
 
-            this.inscriptions = this.inscriptions.filter(
-
-                inscription => inscription.id != id
-
-            );
+            this.inscriptions =
+                this.inscriptions.filter(
+                    inscription =>
+                        inscription.id != id
+                );
 
         }
 
