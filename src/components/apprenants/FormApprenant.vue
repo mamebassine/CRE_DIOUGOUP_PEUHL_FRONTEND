@@ -4,358 +4,439 @@
 
         <form @submit.prevent="submitForm">
 
-            <!-- ================= DATE ================= -->
-
-            <div class="row">
-
-                <div class="col-md-6 mb-3">
-
-                    <label>
-                        Date de naissance
-                    </label>
-
-                    <input
-                        type="date"
-                        v-model="form.date_naissance"
-                        class="form-control"
-                        :max="dateMax"
-                        required
-                    >
-
-                    <small
-                        v-if="age !== null"
-                        class="age-info"
-                        :class="{ 'age-error': age < 11 }"
-                    >
-                        Âge : {{ age }} ans
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            <!-- ================= SEXE / SITUATION ================= -->
-
-            <div class="row">
-
-                <div class="col-md-6 mb-3">
-
-                    <label>
-                        Sexe
-                    </label>
-
-                    <select
-                        v-model="form.sexe"
-                        class="form-select"
-                        required
-                    >
-
-                        <option value="">
-                            Choisir
-                        </option>
-
-                        <option value="Masculin">
-                            Masculin
-                        </option>
-
-                        <option value="Feminin">
-                            Féminin
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="col-md-6 mb-3">
-
-                    <label>
-                        Situation matrimoniale
-                    </label>
-
-                    <select
-                        v-model="form.situation_matrimoniale"
-                        class="form-select"
-                        required
-                    >
-
-                        <option value="">
-                            Choisir
-                        </option>
-
-                        <option value="Celibataire">
-                            Célibataire
-                        </option>
-
-                        <option value="Marie">
-                            Marié(e)
-                        </option>
-
-                        <option value="Divorce">
-                            Divorcé(e)
-                        </option>
-
-                        <option value="Veuf">
-                            Veuf(ve)
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-            <!-- ================= NIVEAU ================= -->
-
-            <div class="row">
-
-                <div class="col-md-6 mb-3">
-
-                    <label>
-                        Niveau informatique
-                    </label>
-
-                    <select
-                        v-model="form.niveau_informatique"
-                        class="form-select"
-                        required
-                    >
-
-                        <option value="">
-                            Choisir
-                        </option>
-
-                        <option value="Debutant">
-                            Débutant
-                        </option>
-
-                        <option value="Intermediaire">
-                            Intermédiaire
-                        </option>
-
-                        <option value="Avance">
-                            Avancé
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="col-md-6 mb-3">
-
-                    <label>
-                        Niveau d'étude
-                    </label>
-
-                    <input
-                        type="text"
-                        v-model="form.niveau_etude"
-                        class="form-control"
-                        placeholder="Ex : Licence"
-                        required
-                    >
-
-                </div>
-
-            </div>
-
-
-            <!-- ================= TELEPHONE / ADRESSE ================= -->
-
-            <div class="row">
-
-                <div class="col-md-6 mb-3">
-
-                    <label>
-                        Téléphone
-                    </label>
-
-                    <input
-                        type="text"
-                        v-model="form.telephone"
-                        class="form-control"
-                        placeholder="Ex : 77 000 00 00"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="col-md-6 mb-3">
-
-                    <label>
-                        Adresse
-                    </label>
-
-                    <input
-                        type="text"
-                        v-model="form.adresse"
-                        class="form-control"
-                        placeholder="Votre adresse"
-                        required
-                    >
-
-                </div>
-
-            </div>
-
-
-            <!-- ================= FONCTION / PHOTO ================= -->
-
-            <div class="row">
-
-                <div class="col-md-6 mb-3">
-
-                    <label>
-                        Fonction
-                    </label>
-
-                    <input
-                        type="text"
-                        v-model="form.fonction"
-                        class="form-control"
-                        placeholder="Ex : Étudiant, Enseignant..."
-                    >
-
-                </div>
-
-
-                <div class="col-md-6 mb-3">
-
-                    <label>
-                        Photo
-                    </label>
-
-                    <input
-                        type="file"
-                        class="form-control"
-                        accept="image/*"
-                        @change="handlePhoto"
-                    >
-
-
-                    <!-- APERÇU PHOTO -->
-
-                    <img
-                        v-if="previewPhoto"
-                        :src="previewPhoto"
-                        class="photo-preview"
-                        alt="Aperçu photo"
-                    >
-
-                </div>
-
-            </div>
-
-
-            <!-- ================= FORMATION / HORAIRE ================= -->
-
-            <div class="row">
-
-                <!-- ================= FORMATION DYNAMIQUE ================= -->
-
-                <div class="col-md-6 mb-3">
-
-                    <label>
-                        Formation choisie
-                    </label>
-
-                    <select
-                        v-model="form.module_choisi"
-                        class="form-select"
-                    >
-
-                        <option value="">
-                            Choisir une formation
-                        </option>
-
-
-                        <!-- CHARGEMENT -->
-
-                        <option
-                            v-if="loadingFormations"
-                            disabled
-                            value=""
+            <!-- ================================================= -->
+            <!-- IDENTITÉ -->
+            <!-- ================================================= -->
+
+            <div
+                v-if="mode === 'admin'"
+                class="section"
+            >
+
+                <h3>
+                    <i class="fas fa-user"></i>
+                    Informations personnelles
+                </h3>
+
+                <div class="row">
+
+                    <!-- NOM -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            Nom
+                        </label>
+
+                        <input
+                            v-model="form.nom"
+                            type="text"
+                            class="form-control"
+                            placeholder="Nom"
+                            required
                         >
-                            Chargement des formations...
-                        </option>
+
+                    </div>
 
 
-                        <!-- FORMATIONS -->
+                    <!-- PRÉNOM -->
 
-                        <option
-                            v-for="formation in formationsActives"
-                            :key="formation.id"
-                            :value="formation.nom"
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            Prénom
+                        </label>
+
+                        <input
+                            v-model="form.prenom"
+                            type="text"
+                            class="form-control"
+                            placeholder="Prénom"
+                            required
                         >
-                            {{ formation.nom }}
-                        </option>
 
-                    </select>
-
-
-                    <small
-                        v-if="!loadingFormations && formationsActives.length === 0"
-                        class="horaire-info"
-                    >
-                        Aucune formation active disponible.
-                    </small>
+                    </div>
 
                 </div>
 
 
-                <!-- ================= HORAIRE ================= -->
+                <!-- EMAIL -->
 
-                <div class="col-md-6 mb-3">
+                <div class="mb-3">
 
                     <label>
-                        Horaire choisi
+                        Email
                     </label>
 
-                    <select
-                        v-model="form.horaire_choisi"
-                        class="form-select"
+                    <input
+                        v-model="form.email"
+                        type="email"
+                        class="form-control"
+                        placeholder="exemple@email.com"
+                        required
                     >
-
-                        <option value="">
-                            Choisir un horaire
-                        </option>
-
-                        <option value="Matin - 10h à 11h">
-                            Matin — 10h à 11h
-                        </option>
-
-                        <option value="Après 10h - 11h à 13h">
-                            Après 10h — 11h à 13h
-                        </option>
-
-                        <option value="Soir - 15h à 17h">
-                            Soir — 15h à 17h
-                        </option>
-
-                    </select>
-
-                    <small class="horaire-info">
-                        Révision / retapage : mercredi matin seulement.
-                    </small>
 
                 </div>
 
             </div>
 
 
-            <!-- ================= ADMIN ================= -->
+            <!-- ================================================= -->
+            <!-- DATE DE NAISSANCE -->
+            <!-- ================================================= -->
+
+            <div class="section">
+
+                <h3>
+                    <i class="fas fa-id-card"></i>
+                    Informations personnelles
+                </h3>
+
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            Date de naissance
+                        </label>
+
+                        <input
+                            type="date"
+                            v-model="form.date_naissance"
+                            class="form-control"
+                            :max="dateMax"
+                            required
+                        >
+
+                        <small
+                            v-if="age !== null"
+                            class="age-info"
+                            :class="{
+                                'age-error': age < 11
+                            }"
+                        >
+                            Âge : {{ age }} ans
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SEXE / SITUATION -->
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            Sexe
+                        </label>
+
+                        <select
+                            v-model="form.sexe"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Choisir
+                            </option>
+
+                            <option value="Masculin">
+                                Masculin
+                            </option>
+
+                            <option value="Feminin">
+                                Féminin
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            Situation matrimoniale
+                        </label>
+
+                        <select
+                            v-model="form.situation_matrimoniale"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Choisir
+                            </option>
+
+                            <option value="Celibataire">
+                                Célibataire
+                            </option>
+
+                            <option value="Marie">
+                                Marié(e)
+                            </option>
+
+                            <option value="Divorce">
+                                Divorcé(e)
+                            </option>
+
+                            <option value="Veuf">
+                                Veuf(ve)
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- NIVEAU -->
+            <!-- ================================================= -->
+
+            <div class="section">
+
+                <h3>
+                    <i class="fas fa-graduation-cap"></i>
+                    Niveau et compétences
+                </h3>
+
+
+                <div class="row">
+
+                    <!-- NIVEAU INFORMATIQUE -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            Niveau informatique
+                        </label>
+
+                        <select
+                            v-model="form.niveau_informatique"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Choisir
+                            </option>
+
+                            <option value="Debutant">
+                                Débutant
+                            </option>
+
+                            <option value="Intermediaire">
+                                Intermédiaire
+                            </option>
+
+                            <option value="Avance">
+                                Avancé
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- NIVEAU ÉTUDE -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            Niveau d'étude
+                        </label>
+
+                        <input
+                            type="text"
+                            v-model="form.niveau_etude"
+                            class="form-control"
+                            placeholder="Ex : BFEM, BAC, Licence..."
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- CONTACT -->
+            <!-- ================================================= -->
+
+            <div class="section">
+
+                <h3>
+                    <i class="fas fa-phone"></i>
+                    Coordonnées
+                </h3>
+
+
+                <div class="row">
+
+                    <!-- TELEPHONE -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            Téléphone
+                        </label>
+
+                        <input
+                            type="text"
+                            v-model="form.telephone"
+                            class="form-control"
+                            placeholder="Ex : 77 000 00 00"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- ADRESSE -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            Adresse
+                        </label>
+
+                        <input
+                            type="text"
+                            v-model="form.adresse"
+                            class="form-control"
+                            placeholder="Votre adresse"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- FONCTION / PHOTO -->
+            <!-- ================================================= -->
+
+            <div class="section">
+
+                <h3>
+                    <i class="fas fa-briefcase"></i>
+                    Informations complémentaires
+                </h3>
+
+
+                <div class="row">
+
+                    <!-- FONCTION -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            Fonction
+                        </label>
+
+                        <input
+                            type="text"
+                            v-model="form.fonction"
+                            class="form-control"
+                            placeholder="Ex : Étudiant, Enseignant..."
+                        >
+
+                    </div>
+
+
+                    <!-- PHOTO -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            Photo
+                        </label>
+
+                        <input
+                            type="file"
+                            class="form-control"
+                            accept="image/jpeg,image/png,image/jpg,image/webp"
+                            @change="handlePhoto"
+                        >
+
+
+                        <!-- PHOTO EXISTANTE -->
+
+                        <div
+                            v-if="
+                                !previewPhoto &&
+                                photoExistante
+                            "
+                            class="photo-container"
+                        >
+
+                            <span>
+                                Photo actuelle
+                            </span>
+
+                            <img
+                                :src="photoExistante"
+                                class="photo-preview"
+                                alt="Photo actuelle"
+                            >
+
+                        </div>
+
+
+                        <!-- NOUVELLE PHOTO -->
+
+                        <div
+                            v-if="previewPhoto"
+                            class="photo-container"
+                        >
+
+                            <span>
+                                Nouvelle photo
+                            </span>
+
+                            <img
+                                :src="previewPhoto"
+                                class="photo-preview"
+                                alt="Aperçu photo"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- ADMIN -->
+            <!-- ================================================= -->
 
             <div
                 v-if="mode === 'admin'"
                 class="admin-box"
             >
 
+                <h3>
+                    <i class="fas fa-cog"></i>
+                    Gestion de l'apprenant
+                </h3>
 
-                <!-- ================= STATUT ================= -->
 
                 <div class="row">
 
@@ -388,78 +469,50 @@
 
                 </div>
 
-
-                <!-- ================= INFORMATIONS UTILISATEUR ================= -->
-
-                <h5>
-                    Informations utilisateur
-                </h5>
+            </div>
 
 
-                <div class="row">
+            <!-- ================================================= -->
+            <!-- INFORMATION -->
+            <!-- ================================================= -->
 
-                    <div class="col-md-6 mb-3">
+            <div class="info-message">
 
-                        <label>
-                            Nom
-                        </label>
+                <i class="fas fa-info-circle"></i>
 
-                        <input
-                            v-model="form.nom"
-                            type="text"
-                            class="form-control"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="col-md-6 mb-3">
-
-                        <label>
-                            Prénom
-                        </label>
-
-                        <input
-                            v-model="form.prenom"
-                            type="text"
-                            class="form-control"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <div class="mb-3">
-
-                    <label>
-                        Email
-                    </label>
-
-                    <input
-                        type="email"
-                        v-model="form.email"
-                        class="form-control"
-                        required
-                    >
-
-                </div>
+                <span>
+                    La formation et l'horaire sont gérés
+                    séparément dans les inscriptions.
+                </span>
 
             </div>
 
 
-            <!-- ================= BOUTON ================= -->
+            <!-- ================================================= -->
+            <!-- BOUTON -->
+            <!-- ================================================= -->
 
             <button
                 type="submit"
                 class="submit-btn"
+                :disabled="loadingSubmit"
             >
 
-                <i class="fas fa-save"></i>
+                <i
+                    v-if="loadingSubmit"
+                    class="fas fa-spinner fa-spin"
+                ></i>
 
-                {{ bouton }}
+                <i
+                    v-else
+                    class="fas fa-save"
+                ></i>
+
+                {{
+                    loadingSubmit
+                        ? "Modification..."
+                        : bouton
+                }}
 
             </button>
 
@@ -477,12 +530,9 @@ import {
     ref,
     computed,
     watch,
-    onMounted
+    onMounted,
+    onBeforeUnmount
 } from "vue";
-
-import {
-    getFormations
-} from "../../services/formationService";
 
 
 /* =====================================================
@@ -519,123 +569,189 @@ const emit = defineEmits([
 
 
 /* =====================================================
-   FORMATIONS
-===================================================== */
-
-const formations = ref([]);
-
-const loadingFormations = ref(false);
-
-
-/* =====================================================
-   CHARGER LES FORMATIONS
-===================================================== */
-
-const chargerFormations = async () => {
-
-    loadingFormations.value = true;
-
-    try {
-
-        const response =
-            await getFormations();
-
-        console.log(
-            "Formations récupérées :",
-            response.data
-        );
-
-
-        /*
-         * Ton API utilise probablement
-         * une pagination Laravel.
-         *
-         * Les formations sont donc dans :
-         *
-         * response.data.data
-         */
-
-        formations.value =
-            response.data.data ?? [];
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Erreur lors du chargement des formations :",
-            error
-        );
-
-        formations.value = [];
-
-    }
-
-    finally {
-
-        loadingFormations.value = false;
-
-    }
-
-};
-
-
-/* =====================================================
-   FORMATIONS ACTIVES UNIQUEMENT
-===================================================== */
-
-const formationsActives = computed(() => {
-
-    return formations.value.filter(
-
-        formation =>
-
-            formation.is_active === true ||
-
-            formation.is_active === 1 ||
-
-            formation.is_active === "1"
-
-    );
-
-});
-
-
-/* =====================================================
    FORMULAIRE
 ===================================================== */
 
 const form = reactive({
 
-    ...props.apprenant,
+    nom: "",
 
-    nom:
-        props.apprenant.user?.nom || "",
+    prenom: "",
 
-    prenom:
-        props.apprenant.user?.prenom || "",
+    email: "",
 
-    email:
-        props.apprenant.user?.email || "",
+    date_naissance: "",
 
-    statut:
-        props.apprenant.statut ||
-        "En attente",
+    sexe: "",
 
-    date_naissance:
-        props.apprenant.date_naissance
-            ? String(
-                props.apprenant.date_naissance
-            ).split("T")[0]
-            : "",
+    situation_matrimoniale: "",
 
-    photo: null
+    niveau_informatique: "",
+
+    niveau_etude: "",
+
+    telephone: "",
+
+    adresse: "",
+
+    fonction: "",
+
+    photo: null,
+
+    statut: "En attente"
 
 });
 
 
 /* =====================================================
-   SYNCHRONISATION AVEC LE PROPS
+   CHARGEMENT
+===================================================== */
+
+const loadingSubmit = ref(false);
+
+
+/* =====================================================
+   PHOTO
+===================================================== */
+
+const previewPhoto = ref(null);
+
+
+/* =====================================================
+   PHOTO EXISTANTE
+===================================================== */
+
+const photoExistante = computed(() => {
+
+    if (!props.apprenant?.photo) {
+
+        return null;
+
+    }
+
+
+    const photo =
+        String(props.apprenant.photo);
+
+
+    if (photo.startsWith("http")) {
+
+        return photo;
+
+    }
+
+
+    return `http://127.0.0.1:8000/storage/${photo}`;
+
+});
+
+
+/* =====================================================
+   REMPLIR FORMULAIRE
+===================================================== */
+
+function remplirFormulaire(apprenant) {
+
+    if (!apprenant) {
+
+        return;
+
+    }
+
+
+    /*
+     * Informations du USER
+     */
+
+    form.nom =
+        apprenant.user?.nom || "";
+
+    form.prenom =
+        apprenant.user?.prenom || "";
+
+    form.email =
+        apprenant.user?.email ||
+        apprenant.email ||
+        "";
+
+
+    /*
+     * Informations APPRENANT
+     */
+
+    form.date_naissance =
+        apprenant.date_naissance
+            ? String(
+                apprenant.date_naissance
+            ).split("T")[0]
+            : "";
+
+
+    form.sexe =
+        apprenant.sexe || "";
+
+
+    form.situation_matrimoniale =
+        apprenant.situation_matrimoniale || "";
+
+
+    form.niveau_informatique =
+        apprenant.niveau_informatique || "";
+
+
+    form.niveau_etude =
+        apprenant.niveau_etude || "";
+
+
+    form.telephone =
+        apprenant.telephone || "";
+
+
+    form.adresse =
+        apprenant.adresse || "";
+
+
+    form.fonction =
+        apprenant.fonction || "";
+
+
+    form.statut =
+        apprenant.statut || "En attente";
+
+
+    /*
+     * IMPORTANT
+     *
+     * On ne met pas :
+     *
+     * - user
+     * - inscriptions
+     * - matricule
+     * - created_by
+     * - user_id
+     *
+     * dans le formulaire.
+     */
+
+
+    form.photo = null;
+
+
+    if (previewPhoto.value) {
+
+        URL.revokeObjectURL(
+            previewPhoto.value
+        );
+
+    }
+
+    previewPhoto.value = null;
+
+}
+
+
+/* =====================================================
+   WATCH
 ===================================================== */
 
 watch(
@@ -644,87 +760,20 @@ watch(
 
     (nouveau) => {
 
-        if (!nouveau) {
-
-            return;
-
-        }
-
-
-        Object.assign(
-
-            form,
-
-            {
-
-                ...nouveau,
-
-
-                nom:
-                    nouveau.user?.nom ||
-                    "",
-
-
-                prenom:
-                    nouveau.user?.prenom ||
-                    "",
-
-
-                email:
-                    nouveau.user?.email ||
-                    "",
-
-
-                statut:
-                    nouveau.statut ||
-                    "En attente",
-
-
-                /*
-                 * CORRECTION DATE
-                 *
-                 * Laravel envoie parfois :
-                 *
-                 * 1992-12-18T00:00:00.000000Z
-                 *
-                 * Mais input type="date"
-                 * accepte uniquement :
-                 *
-                 * 1992-12-18
-                 */
-
-                date_naissance:
-                    nouveau.date_naissance
-
-                        ? String(
-                            nouveau.date_naissance
-                        ).split("T")[0]
-
-                        : "",
-
-
-                photo: null
-
-            }
-
-        );
+        remplirFormulaire(nouveau);
 
     },
 
     {
-
         deep: true,
-
         immediate: true
-
     }
 
 );
 
 
 /* =====================================================
-   DATE MAXIMALE
-   AU MOINS 11 ANS
+   DATE MAX
 ===================================================== */
 
 const dateMax = computed(() => {
@@ -735,15 +784,28 @@ const dateMax = computed(() => {
         date.getFullYear() - 11
     );
 
-    return date
-        .toISOString()
-        .split("T")[0];
+
+    const annee =
+        date.getFullYear();
+
+    const mois =
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
+
+    const jour =
+        String(
+            date.getDate()
+        ).padStart(2, "0");
+
+
+    return `${annee}-${mois}-${jour}`;
 
 });
 
 
 /* =====================================================
-   CALCUL DE L'ÂGE
+   ÂGE
 ===================================================== */
 
 const age = computed(() => {
@@ -757,52 +819,33 @@ const age = computed(() => {
 
     const naissance =
         new Date(
-            form.date_naissance
+            `${form.date_naissance}T00:00:00`
         );
-
 
     const aujourd =
         new Date();
 
 
     let resultat =
-
         aujourd.getFullYear()
-
         -
-
         naissance.getFullYear();
 
 
     const mois =
-
         aujourd.getMonth()
-
         -
-
         naissance.getMonth();
 
 
     if (
-
-        mois < 0
-
-        ||
-
+        mois < 0 ||
         (
-
-            mois === 0
-
-            &&
-
+            mois === 0 &&
             aujourd.getDate()
-
             <
-
             naissance.getDate()
-
         )
-
     ) {
 
         resultat--;
@@ -816,14 +859,10 @@ const age = computed(() => {
 
 
 /* =====================================================
-   APERÇU PHOTO
+   PHOTO
 ===================================================== */
 
-const previewPhoto =
-    ref(null);
-
-
-const handlePhoto = (event) => {
+function handlePhoto(event) {
 
     const file =
         event.target.files?.[0];
@@ -836,35 +875,78 @@ const handlePhoto = (event) => {
     }
 
 
-    form.photo =
-        file;
+    const formatsAcceptes = [
+
+        "image/jpeg",
+
+        "image/png",
+
+        "image/jpg",
+
+        "image/webp"
+
+    ];
 
 
-    previewPhoto.value =
-        URL.createObjectURL(
-            file
+    if (
+        !formatsAcceptes.includes(
+            file.type
+        )
+    ) {
+
+        alert(
+            "Format photo non accepté. Utilisez JPG, JPEG, PNG ou WEBP."
         );
 
-};
+        event.target.value = "";
+
+        return;
+
+    }
+
+
+    if (
+        file.size >
+        2 * 1024 * 1024
+    ) {
+
+        alert(
+            "La photo ne doit pas dépasser 2 Mo."
+        );
+
+        event.target.value = "";
+
+        return;
+
+    }
+
+
+    if (previewPhoto.value) {
+
+        URL.revokeObjectURL(
+            previewPhoto.value
+        );
+
+    }
+
+
+    form.photo = file;
+
+    previewPhoto.value =
+        URL.createObjectURL(file);
+
+}
 
 
 /* =====================================================
-   ENVOI DU FORMULAIRE
+   SOUMISSION
 ===================================================== */
 
-const submitForm = () => {
-
-
-    /* Vérification de l'âge */
+function submitForm() {
 
     if (
-
-        age.value !== null
-
-        &&
-
+        age.value !== null &&
         age.value < 11
-
     ) {
 
         alert(
@@ -876,28 +958,101 @@ const submitForm = () => {
     }
 
 
+    if (!form.date_naissance) {
+
+        alert(
+            "Veuillez renseigner la date de naissance."
+        );
+
+        return;
+
+    }
+
+
     /*
-     * Envoi au parent
+     * OBJET PROPRE
      */
 
-    emit(
+    const data = {
 
-        "submit",
+        nom:
+            form.nom.trim(),
 
-        form
+        prenom:
+            form.prenom.trim(),
 
+        email:
+            form.email.trim(),
+
+        date_naissance:
+            form.date_naissance,
+
+        sexe:
+            form.sexe,
+
+        situation_matrimoniale:
+            form.situation_matrimoniale,
+
+        niveau_informatique:
+            form.niveau_informatique,
+
+        niveau_etude:
+            form.niveau_etude.trim(),
+
+        telephone:
+            form.telephone.trim(),
+
+        adresse:
+            form.adresse.trim(),
+
+        fonction:
+            form.fonction.trim(),
+
+        statut:
+            form.statut,
+
+        photo:
+            form.photo
+
+    };
+
+
+    console.log(
+        "Données envoyées pour modification :",
+        data
     );
 
-};
+
+    emit(
+        "submit",
+        data
+    );
+
+}
 
 
 /* =====================================================
-   AU CHARGEMENT
+   MONTAGE
 ===================================================== */
 
 onMounted(() => {
 
-    chargerFormations();
+});
+
+
+/* =====================================================
+   NETTOYAGE
+===================================================== */
+
+onBeforeUnmount(() => {
+
+    if (previewPhoto.value) {
+
+        URL.revokeObjectURL(
+            previewPhoto.value
+        );
+
+    }
 
 });
 
@@ -906,13 +1061,13 @@ onMounted(() => {
 
 <style scoped>
 
-/* ==========================================================
+/* =========================================================
    FORMULAIRE
-========================================================== */
+========================================================= */
 
 .form-card {
 
-    background: white;
+    background: #ffffff;
 
     padding: 30px;
 
@@ -925,9 +1080,48 @@ onMounted(() => {
 }
 
 
-/* ==========================================================
+/* =========================================================
+   SECTION
+========================================================= */
+
+.section {
+
+    margin-bottom: 30px;
+
+    padding-bottom: 5px;
+
+}
+
+
+.section h3 {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin: 0 0 22px;
+
+    color: #3B5998;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+}
+
+
+.section h3 i {
+
+    font-size: 17px;
+
+}
+
+
+/* =========================================================
    ROW
-========================================================== */
+========================================================= */
 
 .row {
 
@@ -940,9 +1134,9 @@ onMounted(() => {
 }
 
 
-/* ==========================================================
+/* =========================================================
    COLONNE
-========================================================== */
+========================================================= */
 
 .col-md-6 {
 
@@ -953,9 +1147,9 @@ onMounted(() => {
 }
 
 
-/* ==========================================================
+/* =========================================================
    MARGIN
-========================================================== */
+========================================================= */
 
 .mb-3 {
 
@@ -964,9 +1158,9 @@ onMounted(() => {
 }
 
 
-/* ==========================================================
+/* =========================================================
    LABEL
-========================================================== */
+========================================================= */
 
 label {
 
@@ -981,9 +1175,9 @@ label {
 }
 
 
-/* ==========================================================
-   INPUT / SELECT
-========================================================== */
+/* =========================================================
+   INPUT
+========================================================= */
 
 .form-control,
 .form-select {
@@ -1020,9 +1214,9 @@ label {
 }
 
 
-/* ==========================================================
+/* =========================================================
    ÂGE
-========================================================== */
+========================================================= */
 
 .age-info {
 
@@ -1044,54 +1238,17 @@ label {
 }
 
 
-/* ==========================================================
-   HORAIRE
-========================================================== */
-
-.horaire-info {
-
-    display: block;
-
-    margin-top: 8px;
-
-    color: #666;
-
-    font-size: 13px;
-
-}
-
-
-/* ==========================================================
-   PHOTO
-========================================================== */
-
-.photo-preview {
-
-    width: 100px;
-
-    height: 100px;
-
-    object-fit: cover;
-
-    border-radius: 50%;
-
-    margin-top: 15px;
-
-    border:
-        3px solid #3B5998;
-
-}
-
-
-/* ==========================================================
+/* =========================================================
    ADMIN
-========================================================== */
+========================================================= */
 
 .admin-box {
 
-    margin-top: 25px;
+    margin-top: 20px;
 
-    padding: 20px;
+    margin-bottom: 25px;
+
+    padding: 22px;
 
     background: #F8FAFC;
 
@@ -1103,24 +1260,112 @@ label {
 }
 
 
-.admin-box h5 {
+.admin-box h3 {
 
-    margin-bottom: 20px;
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin: 0 0 20px;
 
     color: #3B5998;
 
-    font-weight: 700;
+    font-size: 17px;
 
 }
 
 
-/* ==========================================================
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.info-message {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 10px;
+
+    margin-bottom: 20px;
+
+    padding: 13px 16px;
+
+    background: #eff6ff;
+
+    border: 1px solid #bfdbfe;
+
+    border-radius: 10px;
+
+    color: #1e40af;
+
+    font-size: 13px;
+
+}
+
+
+.info-message i {
+
+    font-size: 16px;
+
+}
+
+
+/* =========================================================
+   PHOTO
+========================================================= */
+
+.photo-container {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin-top: 12px;
+
+}
+
+
+.photo-container span {
+
+    color: #64748b;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+
+.photo-preview {
+
+    width: 100px;
+
+    height: 100px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border:
+        3px solid #3B5998;
+
+}
+
+
+/* =========================================================
    BOUTON
-========================================================== */
+========================================================= */
 
 .submit-btn {
 
-    margin-top: 20px;
+    margin-top: 10px;
 
     background: #2E7D32;
 
@@ -1148,11 +1393,27 @@ label {
 }
 
 
-/* ==========================================================
+.submit-btn:disabled {
+
+    opacity: .6;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =========================================================
    RESPONSIVE
-========================================================== */
+========================================================= */
 
 @media (max-width: 768px) {
+
+    .form-card {
+
+        padding: 20px;
+
+    }
+
 
     .row {
 
