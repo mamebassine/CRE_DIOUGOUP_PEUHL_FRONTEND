@@ -7,13 +7,12 @@ import {
 } from "vue";
 
 import {
-    useRoute,
-    useRouter
+    useRoute
 } from "vue-router";
 
 import {
     useInscriptionStore
-} from "../../../stores/inscription";
+} from "../../../../stores/inscription";
 
 
 /* =========================================================
@@ -21,8 +20,6 @@ import {
 ========================================================= */
 
 const route = useRoute();
-
-const router = useRouter();
 
 
 /* =========================================================
@@ -96,17 +93,6 @@ const nomApprenant =
 
     });
 
-
-/* =========================================================
-   RETOUR
-========================================================= */
-
-function retour() {
-
-    router.back();
-
-}
-
 </script>
 
 
@@ -120,38 +106,13 @@ function retour() {
 
         <div class="page-header">
 
-            <div class="header-left">
+            <h1>
+                Détail de l'inscription
+            </h1>
 
-                <!-- BOUTON RETOUR -->
-
-                <button
-                    type="button"
-                    class="btn-retour"
-                    @click="retour"
-                >
-
-                    <i class="fas fa-arrow-left"></i>
-
-                    <span>
-                        Retour
-                    </span>
-
-                </button>
-
-
-                <div>
-
-                    <h1>
-                        Détail de l'inscription
-                    </h1>
-
-                    <p>
-                        Consultez les informations de cette inscription
-                    </p>
-
-                </div>
-
-            </div>
+            <p>
+                Consultez les informations de cette inscription
+            </p>
 
         </div>
 
@@ -412,7 +373,7 @@ function retour() {
                 <button
                     type="button"
                     class="btn-footer-retour"
-                    @click="retour"
+                    @click="$router.back()"
                 >
 
                     <i class="fas fa-arrow-left"></i>
@@ -452,7 +413,7 @@ function retour() {
             <button
                 type="button"
                 class="btn-footer-retour"
-                @click="retour"
+                @click="$router.back()"
             >
 
                 <i class="fas fa-arrow-left"></i>
@@ -494,17 +455,6 @@ function retour() {
 }
 
 
-.header-left {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 20px;
-
-}
-
-
 .page-header h1 {
 
     margin: 0;
@@ -525,64 +475,6 @@ function retour() {
     color: #64748b;
 
     font-size: 14px;
-
-}
-
-
-/* =========================================================
-   BOUTON RETOUR
-========================================================= */
-
-.btn-retour {
-
-    height: 44px;
-
-    padding: 0 16px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 10px;
-
-    background: #ffffff;
-
-    color: #3B5998;
-
-    cursor: pointer;
-
-    font-size: 13px;
-
-    font-weight: 700;
-
-    transition: .2s ease;
-
-    box-shadow:
-        0 4px 12px rgba(15, 23, 42, 0.04);
-
-}
-
-
-.btn-retour:hover {
-
-    background: #3B5998;
-
-    color: #ffffff;
-
-    border-color: #3B5998;
-
-    transform: translateX(-2px);
-
-}
-
-
-.btn-retour i {
-
-    font-size: 13px;
 
 }
 
@@ -900,7 +792,9 @@ function retour() {
 }
 
 
-/* VALIDÉ */
+/* =========================================================
+   VALIDÉ
+========================================================= */
 
 .badge.valide {
 
@@ -918,7 +812,9 @@ function retour() {
 }
 
 
-/* ATTENTE */
+/* =========================================================
+   ATTENTE
+========================================================= */
 
 .badge.attente {
 
@@ -936,7 +832,9 @@ function retour() {
 }
 
 
-/* REFUS */
+/* =========================================================
+   REFUS
+========================================================= */
 
 .badge.refuse {
 
@@ -1153,25 +1051,9 @@ function retour() {
 
 @media (max-width: 600px) {
 
-    .header-left {
-
-        align-items: flex-start;
-
-        flex-direction: column;
-
-    }
-
-
     .page-header h1 {
 
         font-size: 24px;
-
-    }
-
-
-    .btn-retour {
-
-        width: fit-content;
 
     }
 

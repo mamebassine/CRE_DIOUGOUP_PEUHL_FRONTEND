@@ -9,7 +9,7 @@ import {
 
 import {
     useFormationStore
-} from "../../../stores/formation";
+} from "../../../../stores/formation";
 
 
 const route = useRoute();

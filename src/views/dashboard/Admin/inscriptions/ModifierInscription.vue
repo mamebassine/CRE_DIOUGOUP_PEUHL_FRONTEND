@@ -4,9 +4,9 @@ import { onMounted } from "vue";
 
 import { useRoute, useRouter } from "vue-router";
 
-import { useInscriptionStore } from "../../../stores/inscription";
+import { useInscriptionStore } from "../../../../stores/inscription";
 
-import FormInscription from "../../../components/inscriptions/FormInscription.vue";
+import FormInscription from "../../../../components/inscriptions/FormInscription.vue";
 
 const route = useRoute();
 

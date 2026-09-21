@@ -4,7 +4,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 import FormInscription from "../../../components/inscriptions/FormInscription.vue";
-import { useInscriptionStore } from "../../../stores/inscription";
+import { useInscriptionStore } from "../../../../stores/inscription.js";
 
 const router = useRouter();
 

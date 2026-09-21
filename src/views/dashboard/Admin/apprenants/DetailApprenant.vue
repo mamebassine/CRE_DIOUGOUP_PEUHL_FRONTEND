@@ -531,7 +531,7 @@ import {
 
 import {
     getApprenant
-} from "../../../services/apprenantService";
+} from "../../../../services/apprenantService";
 
 
 /* =====================================================

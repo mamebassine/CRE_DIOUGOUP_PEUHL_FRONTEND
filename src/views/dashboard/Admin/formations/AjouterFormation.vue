@@ -2,9 +2,9 @@
 
 import { useRouter } from "vue-router";
 
-import FormFormation from "../../../components/formations/FormFormation.vue";
+import FormFormation from "../../../../components/formations/FormFormation.vue";
 
-import { useFormationStore } from "../../../stores/formation";
+import { useFormationStore } from "../../../../stores/formation";
 
 
 const router = useRouter();

@@ -86,13 +86,13 @@ import { ref,onMounted } from "vue";
 import { useRoute,useRouter } from "vue-router";
 
 
-import FormApprenant from "../../../components/apprenants/FormApprenant.vue";
+import FormApprenant from "../../../../components/apprenants/FormApprenant.vue";
 
 
 import {
     getApprenant,
     updateApprenant
-} from "../../../services/apprenantService";
+} from "../../../../services/apprenantService";
 
 
 

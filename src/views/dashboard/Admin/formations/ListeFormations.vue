@@ -8,14 +8,14 @@ import {
 
 import {
     useFormationStore
-} from "../../../stores/formation";
+} from "../../../../stores/formation";
 
 import {
     useRouter
 } from "vue-router";
 
 import FormationTable
-    from "../../../components/formations/TableFormation.vue";
+    from "../../../../components/formations/TableFormation.vue";
 
 
 /* =====================================================

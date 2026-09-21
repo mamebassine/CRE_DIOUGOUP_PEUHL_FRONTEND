@@ -169,40 +169,48 @@ const form = ref({
 
 
 
-const connexion = async()=>{
-
+const connexion = async () => {
 
     loading.value = true;
-
     erreur.value = "";
 
-
-
-    try{
-
+    try {
 
         await auth.login(form.value);
 
+        // Récupérer le rôle de l'utilisateur connecté
+        const role = auth.user?.role;
 
-        router.push("/dashboard");
+        // Administrateur ou gestionnaire
+        if (role === "admin" || role === "gestionnaire") {
 
+            router.push("/dashboard");
 
+        }
 
-    }catch(error){
+        // Apprenant
+        else if (role === "apprenant") {
 
+            router.push("/espace-apprenant");
+
+        }
+
+        // Rôle inconnu
+        else {
+
+            erreur.value = "Rôle utilisateur non reconnu.";
+
+        }
+
+    } catch (error) {
 
         erreur.value = "Email ou mot de passe incorrect.";
 
-
-
-    }finally{
-
+    } finally {
 
         loading.value = false;
 
-
     }
-
 
 }
 

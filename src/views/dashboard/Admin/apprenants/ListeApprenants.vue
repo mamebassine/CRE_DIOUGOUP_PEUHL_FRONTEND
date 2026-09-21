@@ -111,9 +111,9 @@ import { useRouter } from "vue-router";
 
 // composants
 
-import TableApprenants from "../../../components/apprenants/TableApprenants.vue";
+import TableApprenants from "../../../../components/apprenants/TableApprenants.vue";
 
-import RechercheApprenant from "../../../components/apprenants/RechercheApprenant.vue";
+import RechercheApprenant from "../../../../components/apprenants/RechercheApprenant.vue";
 
 
 // API
@@ -121,7 +121,7 @@ import RechercheApprenant from "../../../components/apprenants/RechercheApprenan
 import {
     getApprenants,
     deleteApprenant
-} from "../../../services/apprenantService";
+} from "../../../../services/apprenantService";
 
 
 

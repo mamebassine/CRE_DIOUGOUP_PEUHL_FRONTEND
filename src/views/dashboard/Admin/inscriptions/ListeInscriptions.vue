@@ -18,17 +18,17 @@ import { useRouter }
 
 import { useInscriptionStore }
 
-    from "../../../stores/inscription";
+    from "../../../../stores/inscription";
 
 
 import RechercheInscription
 
-    from "../../../components/inscriptions/RechercheInscription.vue";
+    from "../../../../components/inscriptions/RechercheInscription.vue";
 
 
 import TableInscription
 
-    from "../../../components/inscriptions/TableInscription.vue";
+    from "../../../../components/inscriptions/TableInscription.vue";
 
 
 
