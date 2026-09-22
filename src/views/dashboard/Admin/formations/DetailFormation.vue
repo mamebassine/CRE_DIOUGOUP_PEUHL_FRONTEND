@@ -241,27 +241,6 @@ function getStatutClass(active) {
 
 
             <!-- ================================================= -->
-            <!-- BOUTON RETOUR -->
-            <!-- ================================================= -->
-
-            <div class="top-action">
-
-                <button
-                    class="btn-retour"
-                    type="button"
-                    @click="retour"
-                >
-
-                    <i class="fas fa-arrow-left"></i>
-
-                    Retour
-
-                </button>
-
-            </div>
-
-
-            <!-- ================================================= -->
             <!-- DESCRIPTION -->
             <!-- ================================================= -->
 
