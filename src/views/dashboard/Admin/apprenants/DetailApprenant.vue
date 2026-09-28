@@ -147,11 +147,13 @@
                             </label>
 
                             <span>
+
                                 {{
                                     apprenant.user?.email
                                     || apprenant.email
                                     || "-"
                                 }}
+
                             </span>
 
                         </div>
@@ -166,11 +168,13 @@
                             </label>
 
                             <span>
+
                                 {{
                                     apprenant.telephone
                                     || apprenant.user?.telephone
                                     || "-"
                                 }}
+
                             </span>
 
                         </div>
@@ -231,6 +235,53 @@
 
                             <span>
                                 {{ apprenant.situation_matrimoniale || "-" }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- NUMÉRO CNI -->
+                        <!-- ================================================= -->
+
+                        <div class="info-card">
+
+                            <label>
+                                Numéro CNI
+                            </label>
+
+                            <span>
+                                {{ apprenant.numero_cni || "-" }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- SIGNATURE -->
+                        <!-- ================================================= -->
+
+                        <div class="info-card signature-card">
+
+                            <label>
+                                Signature
+                            </label>
+
+                            <div
+                                v-if="apprenant.signature"
+                                class="signature-container"
+                            >
+
+                                <img
+                                    :src="apprenant.signature"
+                                    alt="Signature de l'apprenant"
+                                    class="signature-image"
+                                >
+
+                            </div>
+
+                            <span v-else>
+                                Aucune signature
                             </span>
 
                         </div>
@@ -1025,6 +1076,48 @@ onMounted(() => {
     font-weight: 700;
 
     word-break: break-word;
+
+}
+
+
+/* =========================================================
+   SIGNATURE
+========================================================= */
+
+.signature-container {
+
+    width: 100%;
+
+    min-height: 100px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 10px;
+
+    background: #ffffff;
+
+    border: 1px dashed #cbd5e1;
+
+    border-radius: 10px;
+
+}
+
+
+.signature-image {
+
+    display: block;
+
+    width: 280px;
+
+    max-width: 100%;
+
+    max-height: 100px;
+
+    object-fit: contain;
 
 }
 

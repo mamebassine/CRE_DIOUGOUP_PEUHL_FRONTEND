@@ -1,4 +1,3 @@
-
 <script setup>
 
 import {
@@ -203,6 +202,78 @@ const nomApprenant =
                 </div>
 
 
+                <!-- =================================================
+                     CNI
+                ================================================== -->
+
+                <div class="detail-item">
+
+                    <div class="item-icon cni-icon">
+
+                        <i class="fas fa-id-card"></i>
+
+                    </div>
+
+                    <div class="item-content">
+
+                        <span class="label">
+                            NUMÉRO CNI
+                        </span>
+
+                        <strong>
+
+                            {{
+                                store.inscription.apprenant?.numero_cni
+                                || "Non renseigné"
+                            }}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     SIGNATURE
+                ================================================== -->
+
+                <div class="detail-item signature-detail-item">
+
+                    <div class="item-icon signature-icon">
+
+                        <i class="fas fa-signature"></i>
+
+                    </div>
+
+                    <div class="item-content">
+
+                        <span class="label">
+                            SIGNATURE
+                        </span>
+
+                        <div
+                            v-if="store.inscription.apprenant?.signature"
+                            class="signature-container"
+                        >
+
+                            <img
+                                :src="store.inscription.apprenant.signature"
+                                alt="Signature de l'apprenant"
+                                class="signature-image"
+                            >
+
+                        </div>
+
+                        <strong v-else>
+                            Aucune signature
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
                 <!-- FORMATION -->
 
                 <div class="detail-item">
@@ -220,10 +291,12 @@ const nomApprenant =
                         </span>
 
                         <strong>
+
                             {{
                                 store.inscription.formation?.nom
                                 || "Non renseignée"
                             }}
+
                         </strong>
 
                     </div>
@@ -248,10 +321,12 @@ const nomApprenant =
                         </span>
 
                         <strong>
+
                             {{
                                 store.inscription.horaire
                                 || "Non renseigné"
                             }}
+
                         </strong>
 
                     </div>
@@ -351,10 +426,12 @@ const nomApprenant =
                         </span>
 
                         <strong>
+
                             {{
                                 store.inscription.etat_formation
                                 || "Non renseigné"
                             }}
+
                         </strong>
 
                     </div>
@@ -662,6 +739,24 @@ const nomApprenant =
 }
 
 
+.cni-icon {
+
+    background: #e0f2fe;
+
+    color: #0284c7;
+
+}
+
+
+.signature-icon {
+
+    background: #f3e8ff;
+
+    color: #9333ea;
+
+}
+
+
 .formation-icon {
 
     background: #ecfdf3;
@@ -746,6 +841,50 @@ const nomApprenant =
     font-weight: 700;
 
     word-break: break-word;
+
+}
+
+
+/* =========================================================
+   SIGNATURE
+========================================================= */
+
+.signature-container {
+
+    width: 100%;
+
+    max-width: 300px;
+
+    min-height: 90px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 8px;
+
+    background: #ffffff;
+
+    border: 1px dashed #cbd5e1;
+
+    border-radius: 10px;
+
+}
+
+
+.signature-image {
+
+    display: block;
+
+    width: 260px;
+
+    max-width: 100%;
+
+    max-height: 90px;
+
+    object-fit: contain;
 
 }
 

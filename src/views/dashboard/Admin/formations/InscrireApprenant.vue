@@ -59,6 +59,8 @@ const form = ref({
 
     fonction: "",
 
+    numero_cni: "",
+
     horaire: "",
 
     photo: null,
@@ -220,17 +222,6 @@ function choisirPhoto(event) {
 
     form.value.photo =
         event.target.files[0] || null;
-
-}
-
-
-// =====================================================
-// SÉLECTION HORAIRE
-// =====================================================
-
-function choisirHoraire(horaire) {
-
-    form.value.horaire = horaire;
 
 }
 
@@ -768,9 +759,7 @@ onMounted(() => {
                             </label>
 
                             <input
-                                v-model="
-                                    form.password_confirmation
-                                "
+                                v-model="form.password_confirmation"
                                 type="password"
                                 minlength="8"
                                 placeholder="Confirmer le mot de passe"
@@ -875,9 +864,7 @@ onMounted(() => {
                             </label>
 
                             <select
-                                v-model="
-                                    form.situation_matrimoniale
-                                "
+                                v-model="form.situation_matrimoniale"
                                 required
                             >
 
@@ -915,9 +902,7 @@ onMounted(() => {
                             </label>
 
                             <input
-                                v-model="
-                                    form.niveau_etude
-                                "
+                                v-model="form.niveau_etude"
                                 type="text"
                                 placeholder="Ex : BFEM, Bac, Licence..."
                                 required
@@ -935,9 +920,7 @@ onMounted(() => {
                             </label>
 
                             <select
-                                v-model="
-                                    form.niveau_informatique
-                                "
+                                v-model="form.niveau_informatique"
                                 required
                             >
 
@@ -974,6 +957,24 @@ onMounted(() => {
                                 v-model="form.fonction"
                                 type="text"
                                 placeholder="Votre fonction"
+                            >
+
+                        </div>
+
+
+                        <!-- NUMÉRO CNI -->
+
+                        <div class="field">
+
+                            <label>
+                                Numéro CNI
+                            </label>
+
+                            <input
+                                v-model="form.numero_cni"
+                                type="text"
+                                placeholder="Numéro de carte nationale d'identité"
+                                maxlength="50"
                             >
 
                         </div>
@@ -1257,23 +1258,16 @@ onMounted(() => {
 
 <style scoped>
 
-
 /* ==========================================================
    PAGE
 ========================================================== */
 
 .page {
-
     width: 100%;
-
     min-height: 100vh;
-
     padding: 20px;
-
     box-sizing: border-box;
-
     background: #f5f7fb;
-
 }
 
 
@@ -1282,11 +1276,8 @@ onMounted(() => {
 ========================================================== */
 
 .container {
-
     max-width: 1100px;
-
     margin: 0 auto;
-
 }
 
 
@@ -1295,15 +1286,10 @@ onMounted(() => {
 ========================================================== */
 
 .loading {
-
     text-align: center;
-
     padding: 60px 20px;
-
     color: #666;
-
     font-size: 16px;
-
 }
 
 
@@ -1312,39 +1298,25 @@ onMounted(() => {
 ========================================================== */
 
 .header {
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
     gap: 20px;
-
     margin-bottom: 25px;
-
 }
 
 
 .header h1 {
-
     margin: 0 0 8px;
-
     color: #333;
-
     font-size: 28px;
-
 }
 
 
 .header p {
-
     margin: 0;
-
     color: #777;
-
     font-size: 15px;
-
 }
 
 
@@ -1353,30 +1325,19 @@ onMounted(() => {
 ========================================================== */
 
 .btn-back {
-
     border: none;
-
     padding: 10px 18px;
-
     border-radius: 8px;
-
     background: #eee;
-
     color: #444;
-
     cursor: pointer;
-
     font-weight: 600;
-
     transition: 0.2s;
-
 }
 
 
 .btn-back:hover {
-
     background: #ddd;
-
 }
 
 
@@ -1385,56 +1346,35 @@ onMounted(() => {
 ========================================================== */
 
 .formation-box {
-
     background: #eef4ff;
-
     border: 1px solid #d5e2ff;
-
     border-radius: 12px;
-
     padding: 20px;
-
     margin-bottom: 20px;
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
     gap: 20px;
-
 }
 
 
 .formation-box strong {
-
     color: #555;
-
     font-size: 13px;
-
 }
 
 
 .formation-box h2 {
-
     margin: 7px 0 0;
-
     color: #3B5998;
-
     font-size: 21px;
-
 }
 
 
 .formation-box span {
-
     display: block;
-
     margin-top: 7px;
-
     color: #555;
-
 }
 
 
@@ -1443,39 +1383,25 @@ onMounted(() => {
 ========================================================== */
 
 .message {
-
     padding: 14px 16px;
-
     border-radius: 8px;
-
     margin-bottom: 20px;
-
     font-size: 14px;
-
     line-height: 1.5;
-
 }
 
 
 .message.success {
-
     background: #e8f7ee;
-
     color: #18733c;
-
     border: 1px solid #bde5cc;
-
 }
 
 
 .message.error {
-
     background: #ffe8e8;
-
     color: #b42318;
-
     border: 1px solid #f5c2c2;
-
 }
 
 
@@ -1484,11 +1410,8 @@ onMounted(() => {
 ========================================================== */
 
 .form {
-
     background: #fff;
-
     border-radius: 12px;
-
 }
 
 
@@ -1497,28 +1420,18 @@ onMounted(() => {
 ========================================================== */
 
 .section {
-
     border: 1px solid #eee;
-
     border-radius: 12px;
-
     padding: 22px;
-
     margin-bottom: 20px;
-
     background: #fff;
-
 }
 
 
 .section h2 {
-
     margin: 0 0 20px;
-
     font-size: 18px;
-
     color: #333;
-
 }
 
 
@@ -1527,14 +1440,10 @@ onMounted(() => {
 ========================================================== */
 
 .grid {
-
     display: grid;
-
     grid-template-columns:
         repeat(2, 1fr);
-
     gap: 18px;
-
 }
 
 
@@ -1543,31 +1452,21 @@ onMounted(() => {
 ========================================================== */
 
 .field {
-
     display: flex;
-
     flex-direction: column;
-
     gap: 7px;
-
 }
 
 
 .field.full {
-
     grid-column: 1 / -1;
-
 }
 
 
 .field label {
-
     font-weight: 600;
-
     font-size: 14px;
-
     color: #333;
-
 }
 
 
@@ -1578,58 +1477,38 @@ onMounted(() => {
 input,
 select,
 textarea {
-
     width: 100%;
-
     box-sizing: border-box;
-
     padding: 12px 13px;
-
     border: 1px solid #ddd;
-
     border-radius: 8px;
-
     background: #fff;
-
     color: #333;
-
     font-size: 14px;
-
     outline: none;
-
     transition: 0.2s;
-
 }
 
 
 input:focus,
 select:focus,
 textarea:focus {
-
     border-color: #3B5998;
-
     box-shadow:
         0 0 0 3px
         rgba(59, 89, 152, 0.08);
-
 }
 
 
 input:disabled {
-
     background: #f5f5f5;
-
     color: #666;
-
     cursor: not-allowed;
-
 }
 
 
 textarea {
-
     resize: vertical;
-
 }
 
 
@@ -1638,18 +1517,13 @@ textarea {
 ========================================================== */
 
 .age-info {
-
     color: #2E7D32;
-
     font-size: 13px;
-
 }
 
 
 .age-info.age-error {
-
     color: #b42318;
-
 }
 
 
@@ -1658,23 +1532,16 @@ textarea {
 ========================================================== */
 
 .horaire-field {
-
     margin-top: 20px;
-
 }
 
 
 .horaires-container {
-
     display: grid;
-
     grid-template-columns:
         repeat(3, 1fr);
-
     gap: 18px;
-
     margin-top: 5px;
-
 }
 
 
@@ -1683,52 +1550,35 @@ textarea {
 ========================================================== */
 
 .horaire-card {
-
     display: flex;
-
     align-items: flex-start;
-
     gap: 12px;
-
     padding: 20px;
-
     border: 1px solid #ddd;
-
     border-radius: 14px;
-
     background: #fff;
-
     cursor: pointer;
-
     transition:
         border-color 0.2s ease,
         background 0.2s ease,
         box-shadow 0.2s ease;
-
 }
 
 
 .horaire-card:hover {
-
     border-color: #3B5998;
-
     box-shadow:
         0 4px 12px
         rgba(59, 89, 152, 0.08);
-
 }
 
 
 .horaire-card.selected {
-
     border-color: #3B5998;
-
     background: #eef4ff;
-
     box-shadow:
         0 0 0 2px
         rgba(59, 89, 152, 0.10);
-
 }
 
 
@@ -1737,17 +1587,11 @@ textarea {
 ========================================================== */
 
 .horaire-card input[type="radio"] {
-
     width: 18px;
-
     height: 18px;
-
     margin-top: 3px;
-
     flex-shrink: 0;
-
     accent-color: #3B5998;
-
 }
 
 
@@ -1756,53 +1600,35 @@ textarea {
 ========================================================== */
 
 .horaire-content {
-
     flex: 1;
-
 }
 
 
 .horaire-content h3 {
-
     margin: 0 0 8px;
-
     color: #3B5998;
-
     font-size: 18px;
-
 }
 
 
 .horaire-content strong {
-
     display: inline-block;
-
     margin-bottom: 10px;
-
     color: #3B5998;
-
     font-size: 14px;
-
 }
 
 
 .horaire-content p {
-
     margin: 6px 0;
-
     color: #666;
-
     font-size: 13px;
-
     line-height: 1.5;
-
 }
 
 
 .horaire-content b {
-
     color: #333;
-
 }
 
 
@@ -1811,78 +1637,51 @@ textarea {
 ========================================================== */
 
 .actions {
-
     display: flex;
-
     justify-content: flex-end;
-
     gap: 12px;
-
     margin-top: 25px;
-
     padding-bottom: 20px;
-
 }
 
 
 .btn-cancel,
 .btn-submit {
-
     border: none;
-
     padding: 12px 20px;
-
     border-radius: 8px;
-
     cursor: pointer;
-
     font-weight: 600;
-
     font-size: 14px;
-
     transition: 0.2s;
-
 }
 
 
 .btn-cancel {
-
     background: #eee;
-
     color: #444;
-
 }
 
 
 .btn-cancel:hover {
-
     background: #ddd;
-
 }
 
 
 .btn-submit {
-
     background: #3B5998;
-
     color: white;
-
 }
 
 
 .btn-submit:hover {
-
     background: #2E7D32;
-
 }
 
 
 .btn-submit:disabled {
-
     opacity: 0.6;
-
     cursor: not-allowed;
-
 }
 
 
@@ -1893,9 +1692,7 @@ textarea {
 @media (max-width: 900px) {
 
     .horaires-container {
-
         grid-template-columns: 1fr;
-
     }
 
 }
@@ -1904,64 +1701,47 @@ textarea {
 @media (max-width: 700px) {
 
     .page {
-
         padding: 15px;
-
     }
 
 
     .grid {
-
         grid-template-columns: 1fr;
-
     }
 
 
     .field.full {
-
         grid-column: auto;
-
     }
 
 
     .formation-box {
-
         flex-direction: column;
-
         align-items: flex-start;
-
     }
 
 
     .header {
-
         flex-direction: column;
-
         align-items: stretch;
-
     }
 
 
     .header h1 {
-
         font-size: 24px;
-
     }
 
 
     .actions {
-
         flex-direction: column;
-
     }
 
 
     .btn-cancel,
     .btn-submit {
-
         width: 100%;
-
     }
 
 }
+
 </style>

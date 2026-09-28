@@ -82,7 +82,7 @@
 
 
             <!-- ================================================= -->
-            <!-- DATE DE NAISSANCE -->
+            <!-- DATE DE NAISSANCE + CNI -->
             <!-- ================================================= -->
 
             <div class="section">
@@ -94,6 +94,8 @@
 
 
                 <div class="row">
+
+                    <!-- DATE DE NAISSANCE -->
 
                     <div class="col-md-6 mb-3">
 
@@ -118,6 +120,25 @@
                         >
                             Âge : {{ age }} ans
                         </small>
+
+                    </div>
+
+
+                    <!-- NUMÉRO CNI -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            Numéro CNI
+                        </label>
+
+                        <input
+                            v-model="form.numero_cni"
+                            type="text"
+                            class="form-control"
+                            placeholder="Numéro de carte nationale d'identité"
+                            maxlength="50"
+                        >
 
                     </div>
 
@@ -424,6 +445,97 @@
 
 
             <!-- ================================================= -->
+            <!-- SIGNATURE -->
+            <!-- ================================================= -->
+
+            <div class="section">
+
+                <h3>
+                    <i class="fas fa-signature"></i>
+                    Signature de l'apprenant
+                </h3>
+
+
+                <div class="signature-box">
+
+                    <p class="signature-help">
+
+                        <i class="fas fa-pen"></i>
+
+                        Dessinez votre signature avec la souris
+                        ou avec votre doigt.
+
+                    </p>
+
+
+                    <!-- SIGNATURE EXISTANTE -->
+
+                    <div
+                        v-if="
+                            signatureExistante &&
+                            !signatureModifiee
+                        "
+                        class="signature-existing"
+                    >
+
+                        <span>
+                            Signature actuelle
+                        </span>
+
+                        <img
+                            :src="signatureExistante"
+                            alt="Signature actuelle"
+                        >
+
+                    </div>
+
+
+                    <!-- CANVAS -->
+
+                    <div class="signature-canvas-container">
+
+                        <canvas
+                            ref="signatureCanvas"
+                            class="signature-canvas"
+                            @mousedown="commencerSignature"
+                            @mousemove="dessiner"
+                            @mouseup="terminerSignature"
+                            @mouseleave="terminerSignature"
+                            @touchstart.prevent="commencerSignatureTactile"
+                            @touchmove.prevent="dessinerTactile"
+                            @touchend.prevent="terminerSignature"
+                        ></canvas>
+
+                        <div
+                            v-if="!signatureDessinee"
+                            class="signature-placeholder"
+                        >
+                            Signez ici
+                        </div>
+
+                    </div>
+
+
+                    <!-- BOUTON EFFACER -->
+
+                    <button
+                        type="button"
+                        class="clear-signature-btn"
+                        @click="effacerSignature"
+                    >
+
+                        <i class="fas fa-eraser"></i>
+
+                        Effacer la signature
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
             <!-- ADMIN -->
             <!-- ================================================= -->
 
@@ -510,7 +622,7 @@
 
                 {{
                     loadingSubmit
-                        ? "Modification..."
+                        ? "Enregistrement..."
                         : bouton
                 }}
 
@@ -580,6 +692,8 @@ const form = reactive({
 
     email: "",
 
+    numero_cni: "",
+
     date_naissance: "",
 
     sexe: "",
@@ -598,6 +712,8 @@ const form = reactive({
 
     photo: null,
 
+    signature: "",
+
     statut: "En attente"
 
 });
@@ -615,6 +731,21 @@ const loadingSubmit = ref(false);
 ===================================================== */
 
 const previewPhoto = ref(null);
+
+
+/* =====================================================
+   SIGNATURE
+===================================================== */
+
+const signatureCanvas = ref(null);
+
+const signatureDessinee = ref(false);
+
+const signatureModifiee = ref(false);
+
+const dessinEnCours = ref(false);
+
+let contexteSignature = null;
 
 
 /* =====================================================
@@ -642,6 +773,56 @@ const photoExistante = computed(() => {
 
 
     return `http://127.0.0.1:8000/storage/${photo}`;
+
+});
+
+
+/* =====================================================
+   SIGNATURE EXISTANTE
+===================================================== */
+
+const signatureExistante = computed(() => {
+
+    if (!props.apprenant?.signature) {
+
+        return null;
+
+    }
+
+
+    const signature =
+        String(props.apprenant.signature);
+
+
+    /*
+     * Si Laravel renvoie directement
+     * une image Base64.
+     */
+
+    if (
+        signature.startsWith("data:image")
+    ) {
+
+        return signature;
+
+    }
+
+
+    /*
+     * Si jamais la signature est enregistrée
+     * comme un chemin.
+     */
+
+    if (
+        signature.startsWith("http")
+    ) {
+
+        return signature;
+
+    }
+
+
+    return null;
 
 });
 
@@ -678,6 +859,10 @@ function remplirFormulaire(apprenant) {
     /*
      * Informations APPRENANT
      */
+
+    form.numero_cni =
+        apprenant.numero_cni || "";
+
 
     form.date_naissance =
         apprenant.date_naissance
@@ -720,19 +905,19 @@ function remplirFormulaire(apprenant) {
 
 
     /*
-     * IMPORTANT
+     * Signature existante
      *
-     * On ne met pas :
-     *
-     * - user
-     * - inscriptions
-     * - matricule
-     * - created_by
-     * - user_id
-     *
-     * dans le formulaire.
+     * On la conserve tant que l'apprenant
+     * ne dessine pas une nouvelle signature.
      */
 
+    form.signature =
+        apprenant.signature || "";
+
+
+    /*
+     * Photo
+     */
 
     form.photo = null;
 
@@ -746,6 +931,15 @@ function remplirFormulaire(apprenant) {
     }
 
     previewPhoto.value = null;
+
+
+    /*
+     * Réinitialiser l'état de la signature.
+     */
+
+    signatureModifiee.value = false;
+
+    signatureDessinee.value = false;
 
 }
 
@@ -761,6 +955,17 @@ watch(
     (nouveau) => {
 
         remplirFormulaire(nouveau);
+
+        /*
+         * Le canvas doit être initialisé
+         * après que Vue ait affiché le formulaire.
+         */
+
+        setTimeout(() => {
+
+            initialiserCanvas();
+
+        }, 100);
 
     },
 
@@ -939,6 +1144,384 @@ function handlePhoto(event) {
 
 
 /* =====================================================
+   INITIALISER CANVAS
+===================================================== */
+
+function initialiserCanvas() {
+
+    if (!signatureCanvas.value) {
+
+        return;
+
+    }
+
+
+    const canvas =
+        signatureCanvas.value;
+
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    /*
+     * Prendre en compte la résolution
+     * de l'écran pour avoir une signature
+     * nette.
+     */
+
+    const ratio =
+        Math.max(
+            window.devicePixelRatio || 1,
+            1
+        );
+
+
+    canvas.width =
+        rect.width * ratio;
+
+    canvas.height =
+        rect.height * ratio;
+
+
+    contexteSignature =
+        canvas.getContext("2d");
+
+
+    contexteSignature.scale(
+        ratio,
+        ratio
+    );
+
+
+    /*
+     * Style du trait.
+     */
+
+    contexteSignature.strokeStyle =
+        "#111827";
+
+    contexteSignature.lineWidth =
+        2;
+
+    contexteSignature.lineCap =
+        "round";
+
+    contexteSignature.lineJoin =
+        "round";
+
+
+    /*
+     * Fond blanc.
+     */
+
+    contexteSignature.fillStyle =
+        "#ffffff";
+
+    contexteSignature.fillRect(
+        0,
+        0,
+        rect.width,
+        rect.height
+    );
+
+
+    /*
+     * Si aucune nouvelle signature
+     * n'est dessinée, on ne touche pas
+     * à la signature existante.
+     */
+
+    signatureDessinee.value = false;
+
+}
+
+
+/* =====================================================
+   POSITION SOURIS
+===================================================== */
+
+function obtenirPositionSouris(event) {
+
+    const canvas =
+        signatureCanvas.value;
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    return {
+
+        x:
+            event.clientX -
+            rect.left,
+
+        y:
+            event.clientY -
+            rect.top
+
+    };
+
+}
+
+
+/* =====================================================
+   POSITION DOIGT
+===================================================== */
+
+function obtenirPositionTactile(event) {
+
+    const canvas =
+        signatureCanvas.value;
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+    const touch =
+        event.touches[0];
+
+
+    return {
+
+        x:
+            touch.clientX -
+            rect.left,
+
+        y:
+            touch.clientY -
+            rect.top
+
+    };
+
+}
+
+
+/* =====================================================
+   COMMENCER SIGNATURE SOURIS
+===================================================== */
+
+function commencerSignature(event) {
+
+    if (!contexteSignature) {
+
+        initialiserCanvas();
+
+    }
+
+
+    const position =
+        obtenirPositionSouris(event);
+
+
+    dessinEnCours.value = true;
+
+    signatureModifiee.value = true;
+
+    signatureDessinee.value = true;
+
+
+    contexteSignature.beginPath();
+
+    contexteSignature.moveTo(
+        position.x,
+        position.y
+    );
+
+}
+
+
+/* =====================================================
+   DESSIN SOURIS
+===================================================== */
+
+function dessiner(event) {
+
+    if (
+        !dessinEnCours.value ||
+        !contexteSignature
+    ) {
+
+        return;
+
+    }
+
+
+    const position =
+        obtenirPositionSouris(event);
+
+
+    contexteSignature.lineTo(
+        position.x,
+        position.y
+    );
+
+    contexteSignature.stroke();
+
+}
+
+
+/* =====================================================
+   COMMENCER SIGNATURE TACTILE
+===================================================== */
+
+function commencerSignatureTactile(event) {
+
+    if (!contexteSignature) {
+
+        initialiserCanvas();
+
+    }
+
+
+    const position =
+        obtenirPositionTactile(event);
+
+
+    dessinEnCours.value = true;
+
+    signatureModifiee.value = true;
+
+    signatureDessinee.value = true;
+
+
+    contexteSignature.beginPath();
+
+    contexteSignature.moveTo(
+        position.x,
+        position.y
+    );
+
+}
+
+
+/* =====================================================
+   DESSIN TACTILE
+===================================================== */
+
+function dessinerTactile(event) {
+
+    if (
+        !dessinEnCours.value ||
+        !contexteSignature
+    ) {
+
+        return;
+
+    }
+
+
+    const position =
+        obtenirPositionTactile(event);
+
+
+    contexteSignature.lineTo(
+        position.x,
+        position.y
+    );
+
+    contexteSignature.stroke();
+
+}
+
+
+/* =====================================================
+   TERMINER SIGNATURE
+===================================================== */
+
+function terminerSignature() {
+
+    if (!dessinEnCours.value) {
+
+        return;
+
+    }
+
+
+    dessinEnCours.value = false;
+
+
+    /*
+     * Convertir le dessin en Base64.
+     *
+     * Cette valeur sera envoyée au Laravel.
+     */
+
+    if (
+        signatureCanvas.value &&
+        signatureDessinee.value
+    ) {
+
+        form.signature =
+            signatureCanvas.value.toDataURL(
+                "image/png"
+            );
+
+    }
+
+}
+
+
+/* =====================================================
+   EFFACER SIGNATURE
+===================================================== */
+
+function effacerSignature() {
+
+    if (!signatureCanvas.value) {
+
+        return;
+
+    }
+
+
+    const canvas =
+        signatureCanvas.value;
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    /*
+     * Effacer complètement le canvas.
+     */
+
+    contexteSignature.clearRect(
+        0,
+        0,
+        rect.width,
+        rect.height
+    );
+
+
+    /*
+     * Remettre le fond blanc.
+     */
+
+    contexteSignature.fillStyle =
+        "#ffffff";
+
+    contexteSignature.fillRect(
+        0,
+        0,
+        rect.width,
+        rect.height
+    );
+
+
+    /*
+     * Réinitialiser la signature.
+     */
+
+    form.signature = "";
+
+    signatureDessinee.value = false;
+
+    signatureModifiee.value = true;
+
+}
+
+
+/* =====================================================
    SOUMISSION
 ===================================================== */
 
@@ -970,6 +1553,25 @@ function submitForm() {
 
 
     /*
+     * Si l'utilisateur vient de dessiner
+     * mais que le dernier événement n'est
+     * pas encore passé, récupérer la signature.
+     */
+
+    if (
+        signatureCanvas.value &&
+        signatureDessinee.value
+    ) {
+
+        form.signature =
+            signatureCanvas.value.toDataURL(
+                "image/png"
+            );
+
+    }
+
+
+    /*
      * OBJET PROPRE
      */
 
@@ -983,6 +1585,9 @@ function submitForm() {
 
         email:
             form.email.trim(),
+
+        numero_cni:
+            form.numero_cni.trim(),
 
         date_naissance:
             form.date_naissance,
@@ -1012,13 +1617,16 @@ function submitForm() {
             form.statut,
 
         photo:
-            form.photo
+            form.photo,
+
+        signature:
+            form.signature
 
     };
 
 
     console.log(
-        "Données envoyées pour modification :",
+        "Données envoyées :",
         data
     );
 
@@ -1036,6 +1644,12 @@ function submitForm() {
 ===================================================== */
 
 onMounted(() => {
+
+    setTimeout(() => {
+
+        initialiserCanvas();
+
+    }, 100);
 
 });
 
@@ -1075,7 +1689,7 @@ onBeforeUnmount(() => {
 
     box-shadow:
         0 10px 25px
-        rgba(0, 0, 0, .08);
+        rgba(0, 0, .08);
 
 }
 
@@ -1360,7 +1974,211 @@ label {
 
 
 /* =========================================================
-   BOUTON
+   SIGNATURE
+========================================================= */
+
+.signature-box {
+
+    width: 100%;
+
+}
+
+
+.signature-help {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin: 0 0 12px;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+}
+
+
+.signature-help i {
+
+    color: #3B5998;
+
+}
+
+
+/* =========================================================
+   SIGNATURE EXISTANTE
+========================================================= */
+
+.signature-existing {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin-bottom: 15px;
+
+}
+
+
+.signature-existing span {
+
+    color: #64748b;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+
+.signature-existing img {
+
+    width: 280px;
+
+    max-width: 100%;
+
+    height: 100px;
+
+    object-fit: contain;
+
+    object-position: left center;
+
+    border:
+        1px solid #D1D5DB;
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+}
+
+
+/* =========================================================
+   CONTENEUR CANVAS
+========================================================= */
+
+.signature-canvas-container {
+
+    position: relative;
+
+    width: 100%;
+
+    max-width: 600px;
+
+    height: 180px;
+
+    border:
+        1px solid #D1D5DB;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    overflow: hidden;
+
+}
+
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+.signature-canvas {
+
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    background: #ffffff;
+
+    cursor: crosshair;
+
+    touch-action: none;
+
+}
+
+
+/* =========================================================
+   TEXTE CANVAS
+========================================================= */
+
+.signature-placeholder {
+
+    position: absolute;
+
+    top: 50%;
+
+    left: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    color: #9CA3AF;
+
+    font-size: 15px;
+
+    pointer-events: none;
+
+    user-select: none;
+
+}
+
+
+/* =========================================================
+   BOUTON EFFACER SIGNATURE
+========================================================= */
+
+.clear-signature-btn {
+
+    margin-top: 12px;
+
+    padding: 9px 16px;
+
+    border:
+        1px solid #D1D5DB;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #374151;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .3s;
+
+}
+
+
+.clear-signature-btn:hover {
+
+    background: #F3F4F6;
+
+    border-color: #9CA3AF;
+
+}
+
+
+.clear-signature-btn i {
+
+    margin-right: 6px;
+
+}
+
+
+/* =========================================================
+   BOUTON PRINCIPAL
 ========================================================= */
 
 .submit-btn {
@@ -1427,6 +2245,13 @@ label {
         width: 100%;
 
         min-width: 100%;
+
+    }
+
+
+    .signature-canvas-container {
+
+        height: 160px;
 
     }
 

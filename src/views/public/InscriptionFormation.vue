@@ -52,11 +52,18 @@ const form = ref({
     niveau_etude: "",
     niveau_informatique: "",
     adresse: "",
+
+    // CNI
+    numero_cni: "",
+
     formation_id: "",
     horaire: "",
 
     password: "",
-    password_confirmation: ""
+    password_confirmation: "",
+
+    // Signature
+    signature: ""
 
 });
 
@@ -68,6 +75,19 @@ const form = ref({
 const showPassword = ref(false);
 
 const showPasswordConfirmation = ref(false);
+
+
+// ======================================================
+// SIGNATURE
+// ======================================================
+
+const signatureCanvas = ref(null);
+
+const signatureDessinee = ref(false);
+
+let dessinEnCours = false;
+
+let contexteSignature = null;
 
 
 // ======================================================
@@ -161,6 +181,343 @@ function verifierAge() {
 
 
 // ======================================================
+// VÉRIFICATION CNI
+// ======================================================
+
+// Nettoyer automatiquement le numéro CNI
+// pour ne garder que les chiffres et 13 caractères maximum.
+function nettoyerCni() {
+
+    form.value.numero_cni =
+        form.value.numero_cni
+            .replace(/\D/g, "")
+            .slice(0, 13);
+
+}
+
+
+// Message d'erreur affiché sous le champ CNI.
+const erreurCni = computed(() => {
+
+    const cni =
+        form.value.numero_cni;
+
+    // Aucun numéro renseigné
+    if (!cni) {
+
+        return "Le numéro de CNI est obligatoire.";
+
+    }
+
+    // Vérification des chiffres
+    if (!/^\d+$/.test(cni)) {
+
+        return "Le numéro CNI doit contenir uniquement des chiffres.";
+
+    }
+
+    // Vérification de la longueur
+    if (cni.length !== 13) {
+
+        return "Le numéro CNI doit contenir exactement 13 chiffres.";
+
+    }
+
+    // Vérification selon le sexe
+    if (form.value.sexe === "Masculin") {
+
+        if (!cni.startsWith("1")) {
+
+            return "Pour un homme, le numéro CNI doit commencer par 1.";
+
+        }
+
+    }
+
+    if (form.value.sexe === "Feminin") {
+
+        if (!cni.startsWith("2")) {
+
+            return "Pour une femme, le numéro CNI doit commencer par 2.";
+
+        }
+
+    }
+
+    return "";
+
+});
+
+
+// Vérification complète du CNI avant l'envoi.
+function verifierCni() {
+
+    nettoyerCni();
+
+    if (erreurCni.value) {
+
+        message.value =
+            erreurCni.value;
+
+        messageType.value =
+            "error";
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
+// ======================================================
+// INITIALISER LA SIGNATURE
+// ======================================================
+
+function initialiserCanvas() {
+
+    const canvas =
+        signatureCanvas.value;
+
+    if (!canvas) return;
+
+    contexteSignature =
+        canvas.getContext("2d");
+
+    contexteSignature.lineWidth = 2;
+
+    contexteSignature.lineCap = "round";
+
+    contexteSignature.lineJoin = "round";
+
+    contexteSignature.strokeStyle = "#000";
+
+}
+
+
+// ======================================================
+// POSITION SOURIS
+// ======================================================
+
+function obtenirPositionSouris(event) {
+
+    const canvas =
+        signatureCanvas.value;
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+    return {
+
+        x:
+            event.clientX
+            -
+            rect.left,
+
+        y:
+            event.clientY
+            -
+            rect.top
+
+    };
+
+}
+
+
+// ======================================================
+// POSITION TACTILE
+// ======================================================
+
+function obtenirPositionTactile(event) {
+
+    const canvas =
+        signatureCanvas.value;
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+    const touch =
+        event.touches[0];
+
+    return {
+
+        x:
+            touch.clientX
+            -
+            rect.left,
+
+        y:
+            touch.clientY
+            -
+            rect.top
+
+    };
+
+}
+
+
+// ======================================================
+// COMMENCER SIGNATURE - SOURIS
+// ======================================================
+
+function commencerSignature(event) {
+
+    if (!contexteSignature) {
+
+        initialiserCanvas();
+
+    }
+
+    dessinEnCours = true;
+
+    signatureDessinee.value = true;
+
+    const position =
+        obtenirPositionSouris(event);
+
+    contexteSignature.beginPath();
+
+    contexteSignature.moveTo(
+        position.x,
+        position.y
+    );
+
+}
+
+
+// ======================================================
+// DESSINER - SOURIS
+// ======================================================
+
+function dessiner(event) {
+
+    if (!dessinEnCours) return;
+
+    const position =
+        obtenirPositionSouris(event);
+
+    contexteSignature.lineTo(
+        position.x,
+        position.y
+    );
+
+    contexteSignature.stroke();
+
+}
+
+
+// ======================================================
+// COMMENCER SIGNATURE - TÉLÉPHONE
+// ======================================================
+
+function commencerSignatureTactile(event) {
+
+    event.preventDefault();
+
+    if (!contexteSignature) {
+
+        initialiserCanvas();
+
+    }
+
+    dessinEnCours = true;
+
+    signatureDessinee.value = true;
+
+    const position =
+        obtenirPositionTactile(event);
+
+    contexteSignature.beginPath();
+
+    contexteSignature.moveTo(
+        position.x,
+        position.y
+    );
+
+}
+
+
+// ======================================================
+// DESSINER - TÉLÉPHONE
+// ======================================================
+
+function dessinerTactile(event) {
+
+    event.preventDefault();
+
+    if (!dessinEnCours) return;
+
+    const position =
+        obtenirPositionTactile(event);
+
+    contexteSignature.lineTo(
+        position.x,
+        position.y
+    );
+
+    contexteSignature.stroke();
+
+}
+
+
+// ======================================================
+// TERMINER LA SIGNATURE
+// ======================================================
+
+function terminerSignature() {
+
+    if (!dessinEnCours) return;
+
+    dessinEnCours = false;
+
+    if (
+        signatureCanvas.value
+    ) {
+
+        form.value.signature =
+            signatureCanvas.value.toDataURL(
+                "image/png"
+            );
+
+    }
+
+}
+
+
+// ======================================================
+// EFFACER LA SIGNATURE
+// ======================================================
+
+function effacerSignature() {
+
+    const canvas =
+        signatureCanvas.value;
+
+    if (
+        !canvas ||
+        !contexteSignature
+    ) {
+
+        return;
+
+    }
+
+    contexteSignature.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    form.value.signature = "";
+
+    signatureDessinee.value = false;
+
+}
+
+
+// ======================================================
 // RÉCUPÉRER LA FORMATION
 // ======================================================
 
@@ -189,6 +546,12 @@ onMounted(async () => {
 
         formation.value =
             formationStore.formation;
+
+        setTimeout(() => {
+
+            initialiserCanvas();
+
+        }, 100);
 
     }
 
@@ -272,6 +635,34 @@ async function envoyer() {
 
         message.value =
             "Veuillez sélectionner une formation.";
+
+        messageType.value =
+            "error";
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------
+    // CNI
+    // --------------------------------------------------
+
+    if (!verifierCni()) {
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------
+    // SIGNATURE
+    // --------------------------------------------------
+
+    if (!form.value.signature) {
+
+        message.value =
+            "Veuillez signer avant d'envoyer votre demande.";
 
         messageType.value =
             "error";
@@ -437,7 +828,9 @@ async function envoyer() {
             >
 
 
-                <!-- INFORMATIONS -->
+                <!-- ==================================================
+                     INFORMATIONS PERSONNELLES
+                =================================================== -->
 
                 <div class="section-title">
 
@@ -519,6 +912,35 @@ async function envoyer() {
                             placeholder="77 000 00 00"
                             required
                         >
+
+                    </div>
+
+
+                    <!-- CNI -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Numéro de CNI
+                        </label>
+
+                        <input
+                            v-model="form.numero_cni"
+                            @input="nettoyerCni"
+                            type="text"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            placeholder="Ex : 1234567890123"
+                            maxlength="13"
+                            required
+                        >
+
+                        <small
+                            v-if="erreurCni"
+                            class="cni-error"
+                        >
+                            {{ erreurCni }}
+                        </small>
 
                     </div>
 
@@ -698,159 +1120,216 @@ async function envoyer() {
                 </div>
 
 
+                <!-- ==================================================
+                     HORAIRE
+                =================================================== -->
+
+                <div class="section-title">
+
+                    <h2>
+                        Choix de l'horaire
+                    </h2>
+
+                    <p>
+                        Sélectionnez le créneau qui vous convient.
+                    </p>
+
+                </div>
 
 
-             
+                <div class="horaires-container">
 
 
-            <!-- ==================================================
-     HORAIRE
-================================================== -->
+                    <!-- MATIN : 09H À 11H -->
 
-<div class="section-title">
+                    <label class="horaire-card">
 
-    <h2>
-        Choix de l'horaire
-    </h2>
+                        <input
+                            type="radio"
+                            v-model="form.horaire"
+                            value="Matin - 09h à 11h"
+                            required
+                        >
 
-    <p>
-        Sélectionnez le créneau qui vous convient.
-    </p>
+                        <div class="horaire-content">
 
-</div>
+                            <h3>
+                                Matin
+                            </h3>
 
+                            <strong>
+                                09h à 11h
+                            </strong>
 
-<div class="horaires-container">
+                            <p>
+                                Lundi et Mardi :
+                                <b>Cours</b>
+                            </p>
 
-    <!-- ==================================================
-         MATIN : 09H À 11H
-    ================================================== -->
+                            <p>
+                                Mercredi :
+                                <b>Révision / Retapage</b>
+                            </p>
 
-    <label class="horaire-card">
+                            <p>
+                                Jeudi et Vendredi :
+                                <b>Cours</b>
+                            </p>
 
-        <input
-            type="radio"
-            v-model="form.horaire"
-            value="Matin - 09h à 11h"
-            required
-        >
+                        </div>
 
-        <div class="horaire-content">
-
-            <h3>
-                Matin
-            </h3>
-
-            <strong>
-                09h à 11h
-            </strong>
-
-            <p>
-                Lundi et Mardi :
-                <b>Cours</b>
-            </p>
-
-            <p>
-                Mercredi :
-                <b>Révision / Retapage</b>
-            </p>
-
-            <p>
-                Jeudi et Vendredi :
-                <b>Cours</b>
-            </p>
-
-        </div>
-
-    </label>
+                    </label>
 
 
-    <!-- ==================================================
-         APRÈS 09H : 11H À 13H
-    ================================================== -->
+                    <!-- 11H À 13H -->
 
-    <label class="horaire-card">
+                    <label class="horaire-card">
 
-        <input
-            type="radio"
-            v-model="form.horaire"
-            value="Après 09h - 11h à 13h"
-        >
+                        <input
+                            type="radio"
+                            v-model="form.horaire"
+                            value="Après 09h - 11h à 13h"
+                        >
 
-        <div class="horaire-content">
+                        <div class="horaire-content">
 
-            <h3>
-                Matin 11h
-            </h3>
+                            <h3>
+                                Matin 11h
+                            </h3>
 
-            <strong>
-                11h à 13h
-            </strong>
+                            <strong>
+                                11h à 13h
+                            </strong>
 
-            <p>
-                Lundi et Mardi :
-                <b>Cours</b>
-            </p>
+                            <p>
+                                Lundi et Mardi :
+                                <b>Cours</b>
+                            </p>
 
-            <p>
-                Mercredi :
-                <b>Révision / Retapage</b>
-            </p>
+                            <p>
+                                Mercredi :
+                                <b>Révision / Retapage</b>
+                            </p>
 
-            <p>
-                Jeudi et Vendredi :
-                <b>Cours</b>
-            </p>
+                            <p>
+                                Jeudi et Vendredi :
+                                <b>Cours</b>
+                            </p>
 
-        </div>
+                        </div>
 
-    </label>
+                    </label>
 
 
-    <!-- ==================================================
-         SOIR : 15H À 17H
-    ================================================== -->
+                    <!-- 15H À 17H -->
 
-    <label class="horaire-card">
+                    <label class="horaire-card">
 
-        <input
-            type="radio"
-            v-model="form.horaire"
-            value="Soir - 15h à 17h"
-        >
+                        <input
+                            type="radio"
+                            v-model="form.horaire"
+                            value="Soir - 15h à 17h"
+                        >
 
-        <div class="horaire-content">
+                        <div class="horaire-content">
 
-            <h3>
-                Soir
-            </h3>
+                            <h3>
+                                Soir
+                            </h3>
 
-            <strong>
-                15h à 17h
-            </strong>
+                            <strong>
+                                15h à 17h
+                            </strong>
 
-            <p>
-                Lundi, Mardi, Mercredi et Jeudi :
-                <b>Cours</b>
-            </p>
+                            <p>
+                                Lundi, Mardi, Mercredi et Jeudi :
+                                <b>Cours</b>
+                            </p>
 
-            <p>
-                Vendredi :
-                <b>Pas de cours</b>
-            </p>
+                            <p>
+                                Vendredi :
+                                <b>Pas de cours</b>
+                            </p>
 
-        </div>
+                        </div>
 
-    </label>
+                    </label>
 
-</div>
+                </div>
 
 
-            
+                <!-- ==================================================
+                     SIGNATURE
+                =================================================== -->
+
+                <div class="section-title">
+
+                    <h2>
+                        Signature
+                    </h2>
+
+                    <p>
+                        Veuillez signer dans la zone ci-dessous.
+                    </p>
+
+                </div>
 
 
+                <div class="signature-box">
 
-                <!-- COMPTE -->
+                    <div class="signature-canvas-container">
+
+                        <canvas
+                            ref="signatureCanvas"
+                            class="signature-canvas"
+                            width="700"
+                            height="250"
+                            @mousedown="commencerSignature"
+                            @mousemove="dessiner"
+                            @mouseup="terminerSignature"
+                            @mouseleave="terminerSignature"
+                            @touchstart="commencerSignatureTactile"
+                            @touchmove="dessinerTactile"
+                            @touchend="terminerSignature"
+                        ></canvas>
+
+
+                        <div
+                            v-if="!signatureDessinee"
+                            class="signature-placeholder"
+                        >
+                            Signez ici
+                        </div>
+
+                    </div>
+
+
+                    <div class="signature-actions">
+
+                        <small class="signature-help">
+
+                            Vous pouvez signer avec la souris
+                            ou avec votre doigt sur téléphone.
+
+                        </small>
+
+
+                        <button
+                            type="button"
+                            class="clear-signature-btn"
+                            @click="effacerSignature"
+                        >
+                            Effacer la signature
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     COMPTE
+                =================================================== -->
 
                 <div class="section-title">
 
@@ -889,6 +1368,7 @@ async function envoyer() {
                                 minlength="8"
                                 required
                             >
+
 
                             <button
                                 type="button"
@@ -936,6 +1416,7 @@ async function envoyer() {
                                 required
                             >
 
+
                             <button
                                 type="button"
                                 class="password-toggle"
@@ -960,7 +1441,9 @@ async function envoyer() {
                 </div>
 
 
-                <!-- BOUTON -->
+                <!-- ==================================================
+                     BOUTON
+                =================================================== -->
 
                 <button
                     type="submit"
@@ -988,586 +1471,558 @@ async function envoyer() {
 </template>
 
 
+
+
 <style scoped>
 
-/* ==========================================================
+/* ======================================================
    PAGE
-========================================================== */
+====================================================== */
 
 .inscription-page {
-
     min-height: 100vh;
-
-    background: #f5f8fc;
-
+    background: linear-gradient(
+        135deg,
+        #f5f7fa 0%,
+        #eef3f9 100%
+    );
+    padding: 50px 20px;
 }
-
-
-/* ==========================================================
-   CONTENU
-========================================================== */
 
 .inscription-content {
-
-    min-height: 100vh;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    padding: 50px 20px;
-
-    box-sizing: border-box;
-
+    max-width: 1100px;
+    margin: 0 auto;
 }
-
 
 .inscription-card {
-
-    width: 100%;
-
-    max-width: 950px;
-
     background: #ffffff;
-
-    padding: 45px;
-
     border-radius: 20px;
-
+    padding: 40px;
     box-shadow:
-        0 10px 35px
-        rgba(0, 0, 0, 0.08);
-
-    box-sizing: border-box;
-
+        0 10px 35px rgba(0, 0, 0, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(59, 89, 152, 0.06);
 }
 
 
-/* ==========================================================
-   HEADER FORMULAIRE
-========================================================== */
+/* ======================================================
+   HEADER
+====================================================== */
 
 .page-header {
-
     text-align: center;
-
-    margin-bottom: 30px;
-
+    margin-bottom: 35px;
 }
-
 
 .page-header h1 {
-
     margin: 0 0 10px;
-
     color: #3B5998;
-
-    font-size: 30px;
-
+    font-size: 32px;
+    font-weight: 700;
 }
-
 
 .page-header p {
-
-    margin: 0;
-
-    color: #777;
-
+    color: #6b7280;
     font-size: 15px;
-
+    margin: 0;
 }
 
 
-/* ==========================================================
+/* ======================================================
    FORMATION
-========================================================== */
+====================================================== */
 
 .formation-info {
-
-    background: #eaf3ff;
-
-    border-left: 5px solid #3B5998;
-
-    padding: 18px 20px;
-
-    border-radius: 10px;
-
-    margin-bottom: 25px;
-
+    background: linear-gradient(
+        135deg,
+        #f0f7f1,
+        #f7fbf7
+    );
+    border: 1px solid #dcebdd;
+    border-left: 5px solid #2E7D32;
+    padding: 20px 22px;
+    border-radius: 12px;
+    margin-bottom: 30px;
 }
-
 
 .formation-label {
-
     display: block;
-
     font-size: 13px;
-
     color: #777;
-
-    margin-bottom: 5px;
-
+    margin-bottom: 6px;
 }
-
 
 .formation-info h3 {
-
     margin: 0;
-
-    color: #3B5998;
-
-    font-size: 19px;
-
+    color: #2E7D32;
+    font-size: 20px;
 }
 
 
-/* ==========================================================
+/* ======================================================
    MESSAGE
-========================================================== */
+====================================================== */
 
 .message {
-
-    padding: 15px;
-
+    padding: 15px 18px;
     border-radius: 10px;
-
     margin-bottom: 25px;
-
+    font-weight: 500;
     font-size: 14px;
-
 }
-
 
 .message.success {
-
-    background: #dff5e1;
-
-    color: #1b6e23;
-
+    background: #e8f5e9;
+    color: #2E7D32;
+    border: 1px solid #c8e6c9;
 }
-
 
 .message.error {
-
-    background: #ffe3e3;
-
-    color: #b42318;
-
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
 }
 
 
-/* ==========================================================
-   SECTION
-========================================================== */
+/* ======================================================
+   FORMULAIRE
+====================================================== */
+
+.inscription-form {
+    width: 100%;
+}
 
 .section-title {
-
-    margin-top: 30px;
-
-    margin-bottom: 20px;
-
-    border-bottom: 1px solid #eee;
-
+    margin-top: 35px;
+    margin-bottom: 22px;
     padding-bottom: 10px;
-
+    border-bottom: 1px solid #edf0f4;
 }
-
 
 .section-title h2 {
-
-    margin: 0;
-
+    position: relative;
     color: #3B5998;
-
+    margin: 0;
     font-size: 20px;
-
+    font-weight: 700;
+    padding-left: 14px;
 }
 
+.section-title h2::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 3px;
+    width: 4px;
+    height: 20px;
+    background: #2E7D32;
+    border-radius: 4px;
+}
 
 .section-title p {
-
-    margin: 5px 0 0;
-
-    color: #777;
-
+    color: #666;
+    margin: 7px 0 0;
     font-size: 14px;
-
 }
-
-
-/* ==========================================================
-   GRID
-========================================================== */
 
 .grid {
-
     display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 20px;
-
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
 }
-
-
-/* ==========================================================
-   FORM GROUP
-========================================================== */
 
 .form-group {
-
     display: flex;
-
     flex-direction: column;
-
-    gap: 8px;
-
 }
-
 
 .form-group.full {
-
     grid-column: 1 / -1;
-
 }
-
 
 .form-group label {
-
-    font-size: 14px;
-
     font-weight: 600;
-
-    color: #333;
-
+    margin-bottom: 8px;
+    color: #374151;
+    font-size: 14px;
 }
 
-
-/* ==========================================================
-   INPUT
-========================================================== */
-
-input,
-select {
-
+.form-group input,
+.form-group select {
     width: 100%;
-
-    box-sizing: border-box;
-
-    padding: 14px;
-
-    border-radius: 10px;
-
-    border: 1px solid #ddd;
-
+    min-height: 46px;
+    padding: 11px 14px;
+    border: 1px solid #d9dee7;
+    border-radius: 9px;
     background: #fff;
-
+    color: #333;
     font-size: 15px;
-
+    box-sizing: border-box;
     outline: none;
-
-    transition: 0.2s;
-
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
 
+.form-group input::placeholder {
+    color: #a0a6b0;
+}
 
-input:focus,
-select:focus {
+.form-group input:hover,
+.form-group select:hover {
+    border-color: #b8c1d1;
+}
 
+.form-group input:focus,
+.form-group select:focus {
     border-color: #3B5998;
-
+    background: #fff;
     box-shadow:
-        0 0 0 3px
-        rgba(59, 89, 152, 0.08);
-
+        0 0 0 3px rgba(59, 89, 152, 0.10);
 }
 
 
-/* ==========================================================
+/* ======================================================
+   CNI
+====================================================== */
+
+.form-group input[maxlength="13"] {
+    letter-spacing: 1px;
+}
+
+.cni-error {
+    margin-top: 6px;
+    color: #c62828;
+    font-size: 13px;
+}
+
+
+/* ======================================================
    ÂGE
-========================================================== */
+====================================================== */
 
 .age-info {
-
+    margin-top: 6px;
     color: #2E7D32;
-
     font-size: 13px;
-
 }
-
 
 .age-info.age-error {
-
-    color: #b42318;
-
+    color: #c62828;
 }
 
 
-
-
-/* ==========================================================
-   HORAIRES
-========================================================== */
+/* ======================================================
+   HORAIRE
+====================================================== */
 
 .horaires-container {
-
     display: grid;
-
     grid-template-columns: repeat(3, 1fr);
-
     gap: 18px;
-
 }
-
 
 .horaire-card {
-
-    display: flex;
-
-    align-items: flex-start;
-
-    gap: 12px;
-
-    padding: 20px;
-
-    border: 1px solid #ddd;
-
-    border-radius: 14px;
-
-    background: #ffffff;
-
+    position: relative;
+    display: block;
+    border: 1px solid #dfe3ea;
+    border-radius: 13px;
+    padding: 22px;
+    background: #fff;
     cursor: pointer;
-
-    transition: 0.2s;
-
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
 }
-
 
 .horaire-card:hover {
-
     border-color: #3B5998;
-
+    background: #f8faff;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgba(59, 89, 152, 0.08);
 }
 
-
-.horaire-card input[type="radio"] {
-
-    width: 18px;
-
-    height: 18px;
-
-    margin-top: 3px;
-
-    accent-color: #3B5998;
-
+.horaire-card input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
 }
 
-
-.horaire-content {
-
-    flex: 1;
-
+.horaire-card input:checked + .horaire-content {
+    color: #3B5998;
 }
 
+.horaire-card:has(input:checked) {
+    border-color: #3B5998;
+    background: #f5f8ff;
+    box-shadow:
+        0 0 0 2px rgba(59, 89, 152, 0.10),
+        0 8px 20px rgba(59, 89, 152, 0.08);
+}
 
 .horaire-content h3 {
-
-    margin: 0 0 8px;
-
+    margin: 0 0 10px;
     color: #3B5998;
-
-    font-size: 18px;
-
+    font-size: 17px;
 }
-
 
 .horaire-content strong {
-
-    display: inline-block;
-
-    margin-bottom: 10px;
-
-    color: #3B5998;
-
-    font-size: 14px;
-
+    display: block;
+    margin-bottom: 12px;
+    font-size: 18px;
+    color: #2E7D32;
 }
-
 
 .horaire-content p {
-
-    margin: 6px 0;
-
-    color: #666;
-
-    font-size: 13px;
-
+    margin: 8px 0;
+    color: #555;
+    font-size: 14px;
     line-height: 1.5;
-
 }
 
 
-.horaire-content b {
+/* ======================================================
+   SIGNATURE
+====================================================== */
 
-    color: #333;
+.signature-box {
+    margin-top: 20px;
+}
 
+.signature-canvas-container {
+    position: relative;
+    width: 100%;
+    border: 1px solid #d9dee7;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+}
+
+.signature-canvas-container:hover {
+    border-color: #b8c1d1;
+}
+
+.signature-canvas {
+    display: block;
+    width: 100%;
+    height: 250px;
+    cursor: crosshair;
+    touch-action: none;
+}
+
+.signature-placeholder {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #a0a6b0;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+.signature-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.signature-help {
+    color: #777;
+    font-size: 13px;
+}
+
+.clear-signature-btn {
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    background: #f7f7f7;
+    color: #444;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.clear-signature-btn:hover {
+    background: #eeeeee;
+    border-color: #ccc;
 }
 
 
-
-
-/* ==========================================================
-   PASSWORD
-========================================================== */
+/* ======================================================
+   MOT DE PASSE
+====================================================== */
 
 .password-field {
-
     position: relative;
-
     display: flex;
-
 }
-
 
 .password-field input {
-
     padding-right: 90px;
-
 }
-
 
 .password-toggle {
-
     position: absolute;
-
     right: 8px;
-
     top: 50%;
-
     transform: translateY(-50%);
-
-    width: auto;
-
-    margin: 0;
-
-    padding: 7px 10px;
-
-    background: transparent;
-
-    color: #3B5998;
-
     border: none;
-
-    font-size: 12px;
-
-    cursor: pointer;
-
-}
-
-
-.password-toggle:hover {
-
     background: transparent;
-
-    color: #2E7D32;
-
+    color: #3B5998;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 6px 10px;
 }
 
 
-/* ==========================================================
+/* ======================================================
    BOUTON
-========================================================== */
+====================================================== */
 
 .submit-button {
-
     width: 100%;
-
     margin-top: 35px;
-
-    padding: 16px;
-
-    background: #3B5998;
-
-    color: white;
-
+    padding: 15px 20px;
     border: none;
-
-    border-radius: 12px;
-
-    font-size: 17px;
-
+    border-radius: 10px;
+    background: linear-gradient(
+        135deg,
+        #3B5998,
+        #304b82
+    );
+    color: white;
+    font-size: 16px;
     font-weight: 600;
-
     cursor: pointer;
-
-    transition: 0.2s;
-
+    box-shadow:
+        0 6px 15px rgba(59, 89, 152, 0.18);
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-
-.submit-button:hover {
-
-    background: #2E7D32;
-
+.submit-button:hover:not(:disabled) {
+    background: linear-gradient(
+        135deg,
+        #304b82,
+        #263d6b
+    );
+    transform: translateY(-1px);
+    box-shadow:
+        0 8px 18px rgba(59, 89, 152, 0.24);
 }
 
+.submit-button:active:not(:disabled) {
+    transform: translateY(0);
+}
 
 .submit-button:disabled {
-
     opacity: 0.6;
-
     cursor: not-allowed;
-
+    box-shadow: none;
 }
 
 
-/* ==========================================================
+/* ======================================================
    RESPONSIVE
-========================================================== */
+====================================================== */
+
+@media (max-width: 900px) {
+
+    .horaires-container {
+        grid-template-columns: 1fr;
+    }
+
+    .inscription-card {
+        padding: 30px;
+    }
+}
+
 
 @media (max-width: 700px) {
 
-    .inscription-content {
-
-        padding: 25px 15px;
-
-        align-items: flex-start;
-
+    .inscription-page {
+        padding: 25px 12px;
     }
-
 
     .inscription-card {
-
-        padding: 25px;
-
+        padding: 22px 18px;
         border-radius: 15px;
-
     }
-
-
-    .grid {
-
-        grid-template-columns: 1fr;
-
-    }
-
-
-    .form-group.full {
-
-        grid-column: auto;
-
-    }
-
 
     .page-header h1 {
-
-        font-size: 24px;
-
+        font-size: 26px;
     }
 
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+
+    .form-group.full {
+        grid-column: auto;
+    }
+
+    .section-title {
+        margin-top: 28px;
+    }
+
+    .section-title h2 {
+        font-size: 18px;
+    }
+
+    .signature-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .clear-signature-btn {
+        width: 100%;
+    }
+
+    .signature-canvas {
+        height: 200px;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .inscription-page {
+        padding: 15px 8px;
+    }
+
+    .inscription-card {
+        padding: 20px 15px;
+    }
+
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+    .page-header h1 {
+        font-size: 23px;
+    }
+
+    .formation-info {
+        padding: 16px;
+    }
+
+    .horaire-card {
+        padding: 18px;
+    }
+
+    .submit-button {
+        padding: 14px;
+    }
 }
 
 </style>
