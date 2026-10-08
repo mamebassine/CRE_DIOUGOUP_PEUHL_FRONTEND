@@ -3,20 +3,14 @@
 
 <div class="dashboard-layout">
 
-
-
     <!-- ================= SIDEBAR ================= -->
 
+    <SidebarAdmin v-if="auth.user?.role !== 'apprenant'" />
 
-    <Sidebar />
-
-
-
-
+    <SidebarApprenant v-else />
 
 
     <!-- ================= CONTENU ================= -->
-
 
     <div class="dashboard-content">
 
@@ -189,7 +183,8 @@
 <script setup>
 
 
-import Sidebar from "../Sidebar.vue";
+import SidebarAdmin from "../SidebarAdmin.vue";
+import SidebarApprenant from "../SidebarApprenant.vue";
 
 import { RouterView } from "vue-router";
 

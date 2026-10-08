@@ -2,33 +2,43 @@ import api from "../api/api";
 
 export default {
 
-
-    register(data){
-
+    // ===============================
+    // INSCRIPTION
+    // ===============================
+    register(data) {
         return api.post("/auth/register", data);
-
     },
 
 
-    login(data){
-
+    // ===============================
+    // CONNEXION
+    // ===============================
+    login(data) {
         return api.post("/auth/login", data);
-
     },
 
 
-    profile(){
-
+    // ===============================
+    // RECUPERER LE PROFIL
+    // ===============================
+    profile() {
         return api.get("/auth/profile");
-
     },
 
 
-    logout(){
+    // ===============================
+    // MODIFIER LE PROFIL
+    // ===============================
+    updateProfile(formData) {
+        return api.post("/auth/profile", formData);
+    },
 
+
+    // ===============================
+    // DECONNEXION
+    // ===============================
+    logout() {
         return api.post("/auth/logout");
-
     }
 
-
-}
+};

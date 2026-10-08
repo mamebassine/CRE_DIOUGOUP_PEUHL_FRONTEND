@@ -35,8 +35,8 @@ import Register from "../views/auth/Register.vue";
 // DASHBOARD ADMIN
 // =========================
 
-import Dashboard from "../views/dashboard/Dashboard.vue";
-import Statistiques from "../views/dashboard/Statistiques.vue";
+import Dashboard from "../views/dashboard/DashboardAdmin.vue";
+import Statistiques from "../views/dashboard/Admin/Statistiques.vue";
 import ProfilAdmin from "../views/dashboard/Admin/Profil.vue";
 
 // =========================
@@ -348,12 +348,21 @@ const routes = [
             // FORMATIONS
             // =========================
 
+
+{
+    path: "formations",
+    name: "formations-apprenant",
+    component: () => import("../views/dashboard/Apprenants/FormationsApprenant/Liste.vue")
+},
+
+
+
             {
                 path: "formations",
                 name: "formations-apprenant",
                 component: () =>
                     import(
-                        "../views/dashboard/Apprenants/formations/Liste.vue"
+                        "../views/dashboard/Apprenants/FormationsApprenant/Liste.vue"
                     )
             },
 
@@ -366,7 +375,7 @@ const routes = [
                 name: "inscriptions-apprenant",
                 component: () =>
                     import(
-                        "../views/dashboard/Apprenants/inscriptions/Listes.vue"
+                        "../views/dashboard/Apprenants/MesInscriptions/Listes.vue"
                     )
             },
 
@@ -375,7 +384,7 @@ const routes = [
                 name: "modifier-inscription-apprenant",
                 component: () =>
                     import(
-                        "../views/dashboard/Apprenants/inscriptions/Modifier.vue"
+                        "../views/dashboard/Apprenants/MesInscriptions/Modifier.vue"
                     )
             },
 
@@ -388,7 +397,7 @@ const routes = [
                 name: "diplomes-apprenant",
                 component: () =>
                     import(
-                        "../views/dashboard/Apprenants/diplomes/ListeDiplomes.vue"
+                        "../views/dashboard/Apprenants/MesDiplomes/ListeDiplomes.vue"
                     )
             },
 
@@ -397,7 +406,7 @@ const routes = [
                 name: "demande-diplome-apprenant",
                 component: () =>
                     import(
-                        "../views/dashboard/Apprenants/diplomes/DemandeDiplomes.vue"
+                        "../views/dashboard/Apprenants/MesDiplomes/DemandeDiplomes.vue"
                     )
             },
 
@@ -410,7 +419,7 @@ const routes = [
                 name: "boite-idee-apprenant",
                 component: () =>
                     import(
-                        "../views/dashboard/Apprenants/boiteIdees/ListeIdee.vue"
+                        "../views/dashboard/Apprenants/BoiteIdees/ListeIdee.vue"
                     )
             },
 
@@ -419,7 +428,7 @@ const routes = [
                 name: "modifier-boite-idee-apprenant",
                 component: () =>
                     import(
-                        "../views/dashboard/Apprenants/boiteIdees/Modifier.vue"
+                        "../views/dashboard/Apprenants/BoiteIdees/Modifier.vue"
                     )
             }
 

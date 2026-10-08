@@ -2,7 +2,7 @@
 
 <div class="dashboard-page">
 
-    <!-- ===================== BIENVENUE ===================== -->
+    <!-- ===================== BIENVENUE  POUR ADMINISTRATEUR ===================== -->
 
     <div class="welcome-card">
 
