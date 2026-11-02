@@ -26,17 +26,6 @@
                 </RouterLink>
             </li>
 
-            <!-- NOTIFICATIONS -->
-            <li>
-                <RouterLink
-                    to="/dashboard/notifications"
-                    class="menu-link"
-                    active-class="active-menu"
-                >
-                    <i class="fas fa-bell"></i>
-                    Notifications
-                </RouterLink>
-            </li>
 
             <!-- PROFIL -->
             <li>
@@ -49,6 +38,7 @@
                     Mon Profil
                 </RouterLink>
             </li>
+
 
             <!-- FORMATIONS -->
             <li>
@@ -109,6 +99,22 @@
                     Boîte à idées
                 </RouterLink>
             </li>
+
+
+<!-- NOTIFICATIONS -->
+            <li>
+                <RouterLink
+                    to="/dashboard/notifications"
+                    class="menu-link"
+                    active-class="active-menu"
+                >
+                    <i class="fas fa-bell"></i>
+                    Notifications
+                </RouterLink>
+            </li>
+
+
+
 
             <!-- UTILISATEURS -->
             <li>

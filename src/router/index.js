@@ -1,3 +1,4 @@
+
 import { createRouter, createWebHistory } from "vue-router";
 import NotFound from "../views/NotFound.vue";
 
@@ -32,9 +33,10 @@ import Login from "../views/auth/Login.vue";
 import Register from "../views/auth/Register.vue";
 
 // =========================
-// DASHBOARD ADMIN
+// DASHBOARD ADMIN / GESTIONNAIRE
 // =========================
 
+import Notifications from "../views/dashboard/Notifications.vue";
 import Dashboard from "../views/dashboard/DashboardAdmin.vue";
 import Statistiques from "../views/dashboard/Admin/Statistiques.vue";
 import ProfilAdmin from "../views/dashboard/Admin/Profil.vue";
@@ -303,6 +305,16 @@ const routes = [
                 path: "statistiques",
                 name: "statistiques",
                 component: Statistiques
+            },
+
+            // =========================
+            // NOTIFICATIONS
+            // =========================
+
+            {
+                path: "notifications",
+                name: "notifications-admin",
+                component: Notifications
             }
 
         ]
@@ -347,15 +359,6 @@ const routes = [
             // =========================
             // FORMATIONS
             // =========================
-
-
-{
-    path: "formations",
-    name: "formations-apprenant",
-    component: () => import("../views/dashboard/Apprenants/FormationsApprenant/Liste.vue")
-},
-
-
 
             {
                 path: "formations",
@@ -430,6 +433,16 @@ const routes = [
                     import(
                         "../views/dashboard/Apprenants/BoiteIdees/Modifier.vue"
                     )
+            },
+
+            // =========================
+            // NOTIFICATIONS
+            // =========================
+
+            {
+                path: "notifications",
+                name: "notifications-apprenant",
+                component: Notifications
             }
 
         ]

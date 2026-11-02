@@ -144,6 +144,20 @@
 
             </li>
 
+            <!-- ================= BOITE A IDEES ================= -->
+
+            
+            <li>
+                <RouterLink
+                    to="/espace-apprenant/notifications"
+                    class="menu-link"
+                    active-class="active-menu"
+                >
+                    <i class="fas fa-bell"></i>
+                    Notifications
+                </RouterLink>
+            </li>
+
 
             <!-- ================= STATISTIQUES ================= -->
 
