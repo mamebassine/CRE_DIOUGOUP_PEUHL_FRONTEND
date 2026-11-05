@@ -6,18 +6,28 @@
 
     <div class="welcome-card">
 
-        <div>
+         <div class="welcome-content">
 
-            <h2>
-                Bonjour {{ auth.user?.nom }} 👋
-            </h2>
+                <span class="welcome-label">
+                    ESPACE ADMINISTRATEUR
+                </span>
 
-            <p>
-                Bienvenue dans votre espace d'administration du
-                <strong>CRE Diougoup Peuhl</strong>.
-            </p>
+                <h2>
+                    Bonjour {{ auth.user?.nom || "Administrateur" }} 👋
+                </h2>
 
-        </div>
+                <p>
+                    Bienvenue dans votre espace personnel du
+                    <strong>CRE Diougoup Peuhl</strong>.
+                </p>
+
+                <div class="welcome-date">
+                    <i class="fas fa-calendar-day"></i>
+
+                    {{ currentDate }}
+                </div>
+
+            </div>
 
         <div class="welcome-icon">
             <i class="fas fa-chart-line"></i>

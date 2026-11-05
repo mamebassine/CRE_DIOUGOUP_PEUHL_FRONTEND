@@ -297,6 +297,20 @@ const routes = [
                     )
             },
 
+// =========================
+// DIPLÔMES / ATTESTATIONS
+// =========================
+
+{
+    path: "diplomes",
+    name: "liste-diplomes-admin",
+    component: () =>
+        import(
+            "../views/dashboard/Admin/diplomes/ListeDiplomes.vue"
+        )
+},
+
+
             // =========================
             // STATISTIQUES
             // =========================
