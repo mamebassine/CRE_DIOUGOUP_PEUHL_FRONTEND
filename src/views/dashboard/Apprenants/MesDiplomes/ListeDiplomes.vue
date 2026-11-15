@@ -11,9 +11,19 @@
                     </p>
                 </div>
 
-                <button class="new-btn" @click="nouvelleDemande">
-                    + Nouvelle demande
+                <!-- Formation terminée et aucune demande en cours -->
+                <button
+                    v-if="infosChargees && peutFaireDemande"
+                    class="new-btn"
+                    @click="nouvelleDemande"
+                >
+                    Demander mon diplôme
                 </button>
+
+                <!-- Sinon : message explicatif -->
+                <p v-else-if="infosChargees" class="info-demande">
+                    {{ messageBlocage }}
+                </p>
             </div>
 
             <!-- Statistiques -->
@@ -71,15 +81,24 @@
                 </div>
 
                 <div v-if="demandes.length === 0" class="empty-state">
-                    <div class="empty-icon">📄</div>
+                    <div class="empty-icon">{{ peutFaireDemande ? '🎓' : '⏳' }}</div>
                     <h3>Aucune demande pour le moment</h3>
-                    <p>
-                        Vous n'avez pas encore effectué de demande
-                        de diplôme ou d'attestation.
+
+                    <p v-if="infosChargees && peutFaireDemande">
+                        Votre formation est terminée. Vous pouvez maintenant
+                        demander votre diplôme ou votre attestation.
                     </p>
 
-                    <button class="new-btn" @click="nouvelleDemande">
-                        Faire une demande
+                    <p v-else-if="infosChargees">
+                        {{ messageBlocage }}
+                    </p>
+
+                    <button
+                        v-if="infosChargees && peutFaireDemande"
+                        class="new-btn"
+                        @click="nouvelleDemande"
+                    >
+                        Demander mon diplôme
                     </button>
                 </div>
 
@@ -367,6 +386,11 @@ const chargement = ref(false);
 const erreur = ref("");
 const message = ref("");
 
+// Réponse du back : l'apprenant peut-il faire une demande ?
+const infosChargees = ref(false);
+const peutFaireDemande = ref(false);
+const raisonBlocage = ref(null);
+
 // Fenêtres (détails / modification)
 const demandeSelectionnee = ref(null);
 const mode = ref("");
@@ -413,6 +437,13 @@ const chargerDemandes = async () => {
             demandes.value = [];
         }
 
+        // Le back indique si l'apprenant peut faire une demande
+        if (!Array.isArray(donnees)) {
+            peutFaireDemande.value = donnees.peut_faire_demande === true;
+            raisonBlocage.value = donnees.raison_blocage || null;
+            infosChargees.value = true;
+        }
+
     } catch (error) {
         console.error("Erreur chargement des demandes :", error);
 
@@ -422,6 +453,15 @@ const chargerDemandes = async () => {
         chargement.value = false;
     }
 };
+
+// Message affiché quand l'apprenant ne peut pas faire de demande
+const messageBlocage = computed(() => {
+    if (raisonBlocage.value === "demande_existante") {
+        return "Vous avez déjà effectué une demande. Vous pouvez télécharger votre document autant de fois que vous le souhaitez dès qu'il est validé.";
+    }
+
+    return "Votre formation n'est pas encore terminée. Le bouton « Demander mon diplôme » apparaîtra dès que le centre l'aura marquée comme terminée.";
+});
 
 // Compter les demandes selon leur statut
 const compterStatut = (statut) => {
@@ -451,7 +491,8 @@ const formaterDate = (date) => {
     return `${jour}/${mois}/${annee}`;
 };
 
-// Le diplôme / l'attestation officiel est dans la colonne "fichier_pdf"
+// Le diplôme / l'attestation officiel est dans la colonne "fichier_pdf".
+// Le téléchargement reste possible autant de fois que l'apprenant le souhaite.
 const peutTelecharger = (demande) => {
     return (
         (demande.statut === "valide" || demande.statut === "retire") &&
@@ -566,8 +607,10 @@ const fermerModal = () => {
     erreurModif.value = "";
 };
 
-// Aller vers le formulaire
+// Aller vers le formulaire (seulement si une demande est possible)
 const nouvelleDemande = () => {
+    if (!peutFaireDemande.value) return;
+
     router.push("/espace-apprenant/diplomes/demander");
 };
 
@@ -601,6 +644,16 @@ onMounted(() => {
 
 .page-header p {
     color: #666;
+}
+
+.info-demande {
+    max-width: 380px;
+    background: #f0f5ff;
+    color: #3B5998;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 button {
@@ -831,7 +884,9 @@ td {
 
 .empty-state p {
     color: #777;
-    margin-bottom: 20px;
+    margin: 0 auto 20px;
+    max-width: 520px;
+    line-height: 1.6;
 }
 
 .loading {

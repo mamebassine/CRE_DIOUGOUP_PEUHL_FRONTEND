@@ -1,4 +1,3 @@
-
 import { createRouter, createWebHistory } from "vue-router";
 import NotFound from "../views/NotFound.vue";
 
@@ -297,19 +296,31 @@ const routes = [
                     )
             },
 
-// =========================
-// DIPLÔMES / ATTESTATIONS
-// =========================
+            // =========================
+            // DIPLÔMES / ATTESTATIONS
+            // =========================
 
-{
-    path: "diplomes",
-    name: "liste-diplomes-admin",
-    component: () =>
-        import(
-            "../views/dashboard/Admin/diplomes/ListeDiplomes.vue"
-        )
-},
+            {
+                path: "diplomes",
+                name: "liste-diplomes-admin",
+                component: () =>
+                    import(
+                        "../views/dashboard/Admin/diplomes/ListeDiplomes.vue"
+                    )
+            },
 
+            // =========================
+            // BOITE À IDÉES
+            // =========================
+
+            {
+                path: "boite-idees",
+                name: "boite-idees-admin",
+                component: () =>
+                    import(
+                        "../views/dashboard/Admin/boiteIdees/ListesBoiteIdee.vue"
+                    )
+            },
 
             // =========================
             // STATISTIQUES

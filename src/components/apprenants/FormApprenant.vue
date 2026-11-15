@@ -558,7 +558,18 @@
                             Statut de l'apprenant
                         </label>
 
+                        <!-- En modification : statut affiché en lecture seule -->
+                        <input
+                            v-if="statutLectureSeule"
+                            type="text"
+                            :value="form.statut || 'Non renseigné'"
+                            class="form-control"
+                            disabled
+                        >
+
+                        <!-- À l'inscription : statut sélectionnable -->
                         <select
+                            v-else
                             v-model="form.statut"
                             class="form-select"
                         >
@@ -666,6 +677,12 @@ const props = defineProps({
     bouton: {
         type: String,
         default: "Ajouter l'apprenant"
+    },
+
+    // Empêche la modification du statut sur la page d'édition
+    statutLectureSeule: {
+        type: Boolean,
+        default: false
     }
 
 });
@@ -1613,9 +1630,6 @@ function submitForm() {
         fonction:
             form.fonction.trim(),
 
-        statut:
-            form.statut,
-
         photo:
             form.photo,
 
@@ -1624,6 +1638,11 @@ function submitForm() {
 
     };
 
+    // Le statut est envoyé uniquement lors de l'inscription.
+    // En modification, il reste inchangé côté serveur.
+    if (!props.statutLectureSeule) {
+        data.statut = form.statut;
+    }
 
     console.log(
         "Données envoyées :",

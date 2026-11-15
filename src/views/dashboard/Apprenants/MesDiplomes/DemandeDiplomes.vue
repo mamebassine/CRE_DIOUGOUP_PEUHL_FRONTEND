@@ -15,14 +15,60 @@
             {{ message }}
         </div>
 
-        <div v-if="erreur" class="alert error">
+        <div v-if="erreur && !chargementEchoue" class="alert error">
             {{ erreur }}
         </div>
 
+        <!-- Chargement -->
         <div v-if="chargementInfos" class="loading">
             Chargement de vos informations...
         </div>
 
+        <!-- Les informations n'ont pas pu être chargées -->
+        <div v-else-if="chargementEchoue" class="blocage">
+            <div class="blocage-icone">⚠️</div>
+            <h3>Impossible de charger vos informations</h3>
+            <p>
+                Vérifiez votre connexion, puis réessayez.
+            </p>
+
+            <button type="button" class="submit-btn" @click="chargerInformations">
+                Réessayer
+            </button>
+        </div>
+
+        <!-- L'apprenant a déjà une demande -->
+        <div v-else-if="raisonBlocage === 'demande_existante'" class="blocage">
+            <div class="blocage-icone">📄</div>
+            <h3>Vous avez déjà effectué une demande</h3>
+            <p>
+                Une seule demande est autorisée. Suivez son avancement dans
+                « Mes diplômes et attestations ». Dès qu'elle est validée,
+                vous pouvez télécharger votre document autant de fois
+                que vous le souhaitez.
+            </p>
+
+            <button type="button" class="submit-btn" @click="voirMesDemandes">
+                Voir mes demandes
+            </button>
+        </div>
+
+        <!-- La formation n'est pas encore terminée -->
+        <div v-else-if="!peutDemander" class="blocage">
+            <div class="blocage-icone">⏳</div>
+            <h3>Votre formation n'est pas encore terminée</h3>
+            <p>
+                Vous pourrez demander votre diplôme ou votre attestation dès que
+                le centre aura marqué votre formation comme terminée. Vous
+                recevrez alors une notification et un email.
+            </p>
+
+            <button type="button" class="submit-btn" @click="voirMesDemandes">
+                Retour à mes diplômes
+            </button>
+        </div>
+
+        <!-- Formulaire prérempli -->
         <form v-else @submit.prevent="envoyerDemande" class="form-card">
 
             <h3>1. Type de document</h3>
@@ -87,9 +133,9 @@
 
             <div class="form-grid">
 
-                <!-- Liste des formations de l'apprenant -->
-                <div v-if="formations.length > 0" class="form-group">
-                    <label>Formation suivie *</label>
+                <!-- Formations terminées de l'apprenant -->
+                <div class="form-group">
+                    <label>Formation terminée *</label>
 
                     <select
                         v-model="inscriptionChoisie"
@@ -104,12 +150,6 @@
                             {{ formation.formation }}
                         </option>
                     </select>
-                </div>
-
-                <!-- Saisie libre si aucune inscription validée -->
-                <div v-else class="form-group">
-                    <label>Formation suivie *</label>
-                    <input v-model.trim="form.formation" type="text" required>
                 </div>
 
                 <div class="form-group">
@@ -159,8 +199,9 @@
 
             <p class="info-text">
                 Après l'envoi, votre demande sera transmise à
-                l'administration pour examen. Vous pourrez suivre son
-                évolution depuis votre espace apprenant.
+                l'administration pour examen. Vous ne pourrez effectuer
+                qu'une seule demande. Vous pourrez suivre son évolution
+                depuis votre espace apprenant.
             </p>
 
             <div class="form-actions">
@@ -197,10 +238,15 @@ const router = useRouter();
 // États de la page
 const chargement = ref(false);
 const chargementInfos = ref(false);
+const chargementEchoue = ref(false);
 const message = ref("");
 const erreur = ref("");
 
-// Formations validées de l'apprenant
+// Réponse du back : l'apprenant peut-il faire une demande ?
+const peutDemander = ref(false);
+const raisonBlocage = ref(null);
+
+// Formations terminées de l'apprenant
 const formations = ref([]);
 const inscriptionChoisie = ref("");
 
@@ -237,11 +283,16 @@ const appliquerFormation = () => {
 // Récupérer les informations de l'apprenant pour préremplir le formulaire
 const chargerInformations = async () => {
     chargementInfos.value = true;
+    chargementEchoue.value = false;
     erreur.value = "";
 
     try {
         const reponse = await api.get("/auth/diplomes/pre-remplissage");
         const infos = reponse.data.data || {};
+
+        // Le back indique si l'apprenant peut faire une demande
+        peutDemander.value = infos.peut_faire_demande === true;
+        raisonBlocage.value = infos.raison_blocage || null;
 
         form.prenom = infos.prenom || "";
         form.nom = infos.nom || "";
@@ -268,9 +319,8 @@ const chargerInformations = async () => {
     } catch (error) {
         console.error("Erreur préremplissage :", error);
 
-        erreur.value =
-            "Vos informations n'ont pas pu être chargées. " +
-            "Vous pouvez remplir le formulaire manuellement.";
+        chargementEchoue.value = true;
+        erreur.value = "Vos informations n'ont pas pu être chargées.";
     } finally {
         chargementInfos.value = false;
     }
@@ -286,6 +336,10 @@ const reinitialiser = async () => {
     message.value = "";
 
     await chargerInformations();
+};
+
+const voirMesDemandes = () => {
+    router.push("/espace-apprenant/diplomes");
 };
 
 // Envoyer la demande à l'API Laravel
@@ -360,6 +414,31 @@ onMounted(() => {
     text-align: center;
     color: #3B5998;
     border-radius: 10px;
+}
+
+.blocage {
+    background: white;
+    padding: 45px 25px;
+    text-align: center;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+}
+
+.blocage-icone {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+.blocage h3 {
+    color: #3B5998;
+    margin-bottom: 12px;
+}
+
+.blocage p {
+    color: #666;
+    line-height: 1.6;
+    max-width: 560px;
+    margin: 0 auto 22px;
 }
 
 .form-card {
