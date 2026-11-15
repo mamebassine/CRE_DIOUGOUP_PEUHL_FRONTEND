@@ -1,4 +1,3 @@
-
 <template>
     <div class="page-container">
 
@@ -6,8 +5,8 @@
             <div>
                 <h1>Demande de diplôme ou d'attestation</h1>
                 <p>
-                    Remplissez ce formulaire pour effectuer votre demande
-                    auprès du CRE Diougoup Peuhl.
+                    Vos informations sont déjà remplies. Vérifiez-les,
+                    choisissez le document souhaité, puis envoyez votre demande.
                 </p>
             </div>
         </div>
@@ -20,7 +19,11 @@
             {{ erreur }}
         </div>
 
-        <form @submit.prevent="envoyerDemande" class="form-card">
+        <div v-if="chargementInfos" class="loading">
+            Chargement de vos informations...
+        </div>
+
+        <form v-else @submit.prevent="envoyerDemande" class="form-card">
 
             <h3>1. Type de document</h3>
 
@@ -55,7 +58,12 @@
 
                 <div class="form-group">
                     <label>Lieu de naissance *</label>
-                    <input v-model.trim="form.lieu_naissance" type="text" required>
+                    <input
+                        v-model.trim="form.lieu_naissance"
+                        type="text"
+                        placeholder="Exemple : Saint-Louis"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
@@ -79,21 +87,47 @@
 
             <div class="form-grid">
 
-                <div class="form-group">
+                <!-- Liste des formations de l'apprenant -->
+                <div v-if="formations.length > 0" class="form-group">
+                    <label>Formation suivie *</label>
+
+                    <select
+                        v-model="inscriptionChoisie"
+                        @change="appliquerFormation"
+                        required
+                    >
+                        <option
+                            v-for="formation in formations"
+                            :key="formation.inscription_id"
+                            :value="formation.inscription_id"
+                        >
+                            {{ formation.formation }}
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Saisie libre si aucune inscription validée -->
+                <div v-else class="form-group">
                     <label>Formation suivie *</label>
                     <input v-model.trim="form.formation" type="text" required>
                 </div>
 
                 <div class="form-group">
                     <label>Durée de la formation</label>
-                    <input v-model.trim="form.duree_formation" type="text"
-                        placeholder="Exemple : 6 mois">
+                    <input
+                        v-model.trim="form.duree_formation"
+                        type="text"
+                        placeholder="Exemple : 6 mois"
+                    >
                 </div>
 
                 <div class="form-group">
                     <label>Période de formation</label>
-                    <input v-model.trim="form.periode_formation" type="text"
-                        placeholder="Exemple : Janvier à Juin 2026">
+                    <input
+                        v-model.trim="form.periode_formation"
+                        type="text"
+                        placeholder="Exemple : Janvier à Juin 2026"
+                    >
                 </div>
 
                 <div class="form-group">
@@ -103,8 +137,11 @@
 
                 <div class="form-group">
                     <label>Année académique</label>
-                    <input v-model.trim="form.annee_academique" type="text"
-                        placeholder="Exemple : 2025-2026">
+                    <input
+                        v-model.trim="form.annee_academique"
+                        type="text"
+                        placeholder="Exemple : 2025-2026"
+                    >
                 </div>
 
             </div>
@@ -113,8 +150,11 @@
 
             <div class="form-group">
                 <label>Lieu de la demande *</label>
-                <input v-model.trim="form.lieu_demande" type="text"
-                    placeholder="Exemple : Saint-Louis" required>
+                <input
+                    v-model.trim="form.lieu_demande"
+                    type="text"
+                    required
+                >
             </div>
 
             <p class="info-text">
@@ -124,11 +164,20 @@
             </p>
 
             <div class="form-actions">
-                <button type="button" class="cancel-btn" @click="reinitialiser">
-                    Réinitialiser
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    @click="reinitialiser"
+                    :disabled="chargement"
+                >
+                    Rétablir mes informations
                 </button>
 
-                <button type="submit" class="submit-btn" :disabled="chargement">
+                <button
+                    type="submit"
+                    class="submit-btn"
+                    :disabled="chargement"
+                >
                     {{ chargement ? "Envoi en cours..." : "Envoyer ma demande" }}
                 </button>
             </div>
@@ -139,16 +188,23 @@
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import api from "@/api/api";
 
 const router = useRouter();
 
+// États de la page
 const chargement = ref(false);
+const chargementInfos = ref(false);
 const message = ref("");
 const erreur = ref("");
 
+// Formations validées de l'apprenant
+const formations = ref([]);
+const inscriptionChoisie = ref("");
+
+// Données du formulaire
 const form = reactive({
     type_document: "",
     prenom: "",
@@ -163,19 +219,79 @@ const form = reactive({
     periode_formation: "",
     module_suivi: "",
     annee_academique: "",
-    lieu_demande: ""
+    lieu_demande: "Saint-Louis"
 });
 
-const reinitialiser = () => {
-    Object.keys(form).forEach((key) => {
-        form[key] = "";
-    });
+// Remplir formation + durée selon la formation choisie
+const appliquerFormation = () => {
+    const choix = formations.value.find(
+        formation => formation.inscription_id === inscriptionChoisie.value
+    );
 
-    message.value = "";
-    erreur.value = "";
+    if (!choix) return;
+
+    form.formation = choix.formation;
+    form.duree_formation = choix.duree || "";
 };
 
+// Récupérer les informations de l'apprenant pour préremplir le formulaire
+const chargerInformations = async () => {
+    chargementInfos.value = true;
+    erreur.value = "";
+
+    try {
+        const reponse = await api.get("/auth/diplomes/pre-remplissage");
+        const infos = reponse.data.data || {};
+
+        form.prenom = infos.prenom || "";
+        form.nom = infos.nom || "";
+        form.date_naissance = infos.date_naissance
+            ? String(infos.date_naissance).slice(0, 10)
+            : "";
+        form.lieu_naissance = infos.lieu_naissance || "";
+        form.telephone = infos.telephone || "";
+        form.adresse = infos.adresse || "";
+        form.fonction = infos.fonction || "";
+        form.lieu_demande = "Saint-Louis";
+
+        formations.value = infos.formations || [];
+
+        if (formations.value.length > 0) {
+            inscriptionChoisie.value = formations.value[0].inscription_id;
+            appliquerFormation();
+        } else {
+            inscriptionChoisie.value = "";
+            form.formation = "";
+            form.duree_formation = "";
+        }
+
+    } catch (error) {
+        console.error("Erreur préremplissage :", error);
+
+        erreur.value =
+            "Vos informations n'ont pas pu être chargées. " +
+            "Vous pouvez remplir le formulaire manuellement.";
+    } finally {
+        chargementInfos.value = false;
+    }
+};
+
+// Remettre les informations du dossier de l'apprenant
+const reinitialiser = async () => {
+    form.type_document = "";
+    form.periode_formation = "";
+    form.module_suivi = "";
+    form.annee_academique = "";
+
+    message.value = "";
+
+    await chargerInformations();
+};
+
+// Envoyer la demande à l'API Laravel
 const envoyerDemande = async () => {
+    if (chargement.value) return;
+
     chargement.value = true;
     message.value = "";
     erreur.value = "";
@@ -189,8 +305,7 @@ const envoyerDemande = async () => {
         message.value = reponse.data.message ||
             "Votre demande a été envoyée avec succès.";
 
-        reinitialiser();
-
+        // Rediriger vers la liste des demandes après 1,5 seconde
         setTimeout(() => {
             router.push("/espace-apprenant/diplomes");
         }, 1500);
@@ -211,6 +326,11 @@ const envoyerDemande = async () => {
         chargement.value = false;
     }
 };
+
+// Préremplir le formulaire à l'ouverture de la page
+onMounted(() => {
+    chargerInformations();
+});
 </script>
 
 <style scoped>
@@ -232,6 +352,14 @@ const envoyerDemande = async () => {
 
 .page-header p {
     color: #666;
+}
+
+.loading {
+    background: white;
+    padding: 35px;
+    text-align: center;
+    color: #3B5998;
+    border-radius: 10px;
 }
 
 .form-card {
@@ -324,7 +452,8 @@ const envoyerDemande = async () => {
     color: white;
 }
 
-.submit-btn:disabled {
+.submit-btn:disabled,
+.cancel-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
